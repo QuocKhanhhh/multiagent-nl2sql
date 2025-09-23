@@ -1,4 +1,4 @@
-```markdown
+
 # NL2SQL Analytics API
 
 A FastAPI service that allows non-technical users to query a **data warehouse** in natural Vietnamese.  
@@ -28,7 +28,7 @@ Users can ask questions in plain language, the system generates and validates SQ
 ### 1️⃣ Clone & Configure
 ```bash
 git clone https://github.com/QuocKhanhhh/multiagent-nl2sql.git 
-````
+```
 
 Set environment variables as needed (database credentials, etc.).
 
