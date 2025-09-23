@@ -1,0 +1,69 @@
+# -------------------------
+# Python
+# -------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.eggs/
+.Python
+env/
+venv/
+ENV/
+.venv/
+build/
+dist/
+*.manifest
+*.spec
+pip-wheel-metadata/
+*.log
+
+# Virtual environment directories
+.env
+.env.*
+.envrc
+.python-version
+
+# -------------------------
+# IDE / Editor
+# -------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*.DS_Store
+
+# -------------------------
+# OS / Misc
+# -------------------------
+Thumbs.db
+.DS_Store
+*.bak
+*.tmp
+
+# -------------------------
+# Docker
+# -------------------------
+# Exclude local override files and build artifacts
+docker-compose.override.yml
+.docker/
+*.tar
+
+# -------------------------
+# Project Specific
+# -------------------------
+# Local database files or secrets
+semantic_model.yaml.backup
+*.db
+*.sqlite
+*.pgdata
+
+# Ignore generated test artifacts
+coverage/
+htmlcov/
+.cache/
+.pytest_cache/
+.models/
