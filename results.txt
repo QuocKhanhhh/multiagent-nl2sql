@@ -1,0 +1,1538 @@
+=== Test 1 ===
+Q: Số lượng bài viết có cảm xúc tích cực trong tháng 3 năm 2023?
+Model SQL: -- PLAN_VALIDATION_ERROR: deconstructor_failed
+
+=== Test 2 ===
+Q: Top 5 nguồn có tổng số từ cao nhất trong năm 2022?
+Model SQL: SELECT da.source_name, SUM(fa.word_count) AS sum_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+GROUP BY da.source_name
+ORDER BY SUM(fa.word_count) DESC
+LIMIT 5;
+[OK] Semantic match
+
+=== Test 3 ===
+Q: Tác giả nào có bài viết dài nhất theo thời gian đọc?
+Model SQL: SELECT au.author_name, MAX(fa.read_time) AS max_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+GROUP BY au.author_name
+ORDER BY MAX(fa.read_time) ASC
+LIMIT 1;
+[FAIL] Semantic mismatch
+GT rows: [('ths. đinh tiến dũng, phó cục trưởng cục ttcs & ttđn, bộ văn hóa, thể thao và du lịch', 34.0)]
+Model rows: [('đài pt-th lào cai', 1.0)]
+
+=== Test 4 ===
+Q: Số lượng bài viết có từ khóa 'công nghệ' trong năm 2021?
+Model SQL: -- PLAN_VALIDATION_ERROR: deconstructor_failed
+
+=== Test 5 ===
+Q: Chủ đề nào có trung bình số từ thấp nhất trong năm 2020?
+Model SQL: SELECT dt.topic_name, AVG(fa.word_count) AS avg_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2020
+GROUP BY dt.topic_name
+ORDER BY AVG(fa.word_count) ASC
+LIMIT 1;
+[OK] Semantic match
+
+=== Test 6 ===
+Q: Có bao nhiêu bài viết vào ngày 15/6/2022?
+Model SQL: SELECT dd.full_date, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.day = 15 AND dd.month = 6 AND dd.year = 2022
+GROUP BY dd.full_date;
+[FAIL] Semantic mismatch
+GT rows: [(0.0,)]
+Model rows: []
+
+=== Test 7 ===
+Q: Tổng thời gian đọc của các bài viết theo từng chủ đề?
+Model SQL: SELECT dt.topic_name, SUM(fa.read_time) AS sum_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+GROUP BY dt.topic_name
+ORDER BY SUM(fa.read_time) ASC;
+[OK] Semantic match
+
+=== Test 8 ===
+Q: Tác giả nào có bài viết cảm xúc tiêu cực nhất trong năm 2023?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'year'
+
+=== Test 9 ===
+Q: Số lượng bài viết có thời gian đọc dưới 5 phút?
+Model SQL: -- PLAN_VALIDATION_ERROR: deconstructor_failed
+
+=== Test 10 ===
+Q: Nguồn nào có nhiều bài viết cảm xúc trung lập nhất trong tháng 10/2022?
+Model SQL: SELECT da.source_name, AVG(fa.word_count) AS avg_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022 AND dd.month = 10
+GROUP BY da.source_name
+HAVING fa.sentiment = 'neutral'
+ORDER BY AVG(fa.word_count) ASC
+LIMIT 1;
+
+=== Test 11 ===
+Q: Có bao nhiêu tác giả viết ít nhất 5 bài trong năm 2021?
+Model SQL: SELECT au.author_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2021 AND fa.article_id GROUP BY ''
+GROUP BY au.author_name
+HAVING COUNT(fa.article_id) >= 5;
+
+=== Test 12 ===
+Q: Bài viết nào có tiêu đề chứa 'AI' trong năm 2023?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'year'
+
+=== Test 13 ===
+Q: Số lượng bài viết theo từng năm và cảm xúc?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'year'
+
+=== Test 14 ===
+Q: Chủ đề nào có tổng thời gian đọc thấp nhất trong năm 2022?
+Model SQL: SELECT dt.topic_name, SUM(fa.read_time) AS sum_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+GROUP BY dt.topic_name
+ORDER BY SUM(fa.read_time) ASC
+LIMIT 1;
+[OK] Semantic match
+
+=== Test 15 ===
+Q: Tác giả nào có trung bình thời gian đọc bài viết cao nhất?
+Model SQL: SELECT au.author_name, AVG(fa.read_time) AS avg_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+GROUP BY au.author_name
+ORDER BY AVG(fa.read_time) DESC
+LIMIT 1;
+[OK] Semantic match
+
+=== Test 16 ===
+Q: Số lượng bài viết của từng nguồn trong tháng 2 năm 2023?
+Model SQL: SELECT da.source_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.month = 2 AND dd.year = 2023
+GROUP BY da.source_name;
+[OK] Semantic match
+
+=== Test 17 ===
+Q: Có bao nhiêu bài viết có số từ dưới 500 trong năm 2020?
+Model SQL: SELECT COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2020 AND fa.word_count < 500;
+[OK] Semantic match
+
+=== Test 18 ===
+Q: Top 3 ngày có nhiều bài viết cảm xúc tích cực nhất?
+Model SQL: SELECT dd.full_date, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE fa.sentiment = 'pos'
+GROUP BY dd.full_date
+ORDER BY COUNT(fa.article_id) DESC
+LIMIT 3;
+[OK] Semantic match
+
+=== Test 19 ===
+Q: Nguồn nào có trung bình số từ bài viết thấp nhất?
+Model SQL: SELECT da.source_name, AVG(fa.word_count) AS avg_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+GROUP BY da.source_name
+ORDER BY AVG(fa.word_count) ASC
+LIMIT 1;
+[OK] Semantic match
+
+=== Test 20 ===
+
+=== Test 20 ===
+=== Test 20 ===
+Q: Số lượng tác giả duy nhất theo từng chủ đề trong năm 2022?
+Model SQL: SELECT dt.topic_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+GROUP BY dt.topic_name;
+[FAIL] Semantic mismatch
+GT rows: [('chatgpt', 2.0), ('kinh-doanh-thoi-trang', 3.0), ('lanh-dao', 4.0), ('tai-chinh-ca-nhan', 10.0)]
+Model rows: [('chatgpt', 16.0), ('kinh-doanh-thoi-trang', 32.0), ('lanh-dao', 48.0), ('tai-chinh-ca-nhan', 200.0)]
+
+=== Test 21 ===
+Q: Có bao nhiêu bài viết có từ khóa 'sức khỏe'?
+Model SQL: SELECT COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+WHERE da.content LIKE '%sức khỏe%';
+
+=== Test 22 ===
+Q: Tổng số từ của các bài viết trong tháng 11 năm 2021?
+Model SQL: SELECT dd.year, dd.month, SUM(fa.word_count) AS sum_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2021 AND dd.month = 11
+GROUP BY dd.year, dd.month;
+[FAIL] Semantic mismatch
+GT rows: [(33888.0,)]
+Model rows: [(2021.0, 11.0, 33888.0)]
+
+=== Test 23 ===
+Q: Tác giả nào có số bài viết giảm nhiều nhất từ năm 2021 sang 2022?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'year'
+
+=== Test 24 ===
+Q: Có bao nhiêu ngày trong năm 2020 không có bài viết nào?
+Model SQL: SELECT COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2020;
+[FAIL] Semantic mismatch
+GT rows: [(0.0,)]
+Model rows: [(112.0,)]
+
+=== Test 25 ===
+Q: Top 5 bài viết có thời gian đọc dài nhất trong năm 2023?
+Model SQL: SELECT fa.read_time, MAX(fa.read_time) AS max_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2023
+GROUP BY fa.read_time
+ORDER BY MAX(fa.read_time) DESC
+LIMIT 5;
+[FAIL] Semantic mismatch
+GT rows: [('hoàng quyên và một thập kỷ bước ra ánh sáng với a diary of melody', 14.0), ('hoàng quyên và một thập kỷ bước ra ánh sáng với a diary of melody', 14.0), ('hoàng quyên và một thập kỷ bước ra ánh sáng với a diary of melody', 14.0), ('hoàng quyên và một thập kỷ bước ra ánh sáng với a diary of melody', 14.0), ('hoàng quyên và một thập kỷ bước ra ánh sáng với a diary of melody', 14.0)]
+Model rows: [(10.0, 10.0), (11.0, 11.0), (12.0, 12.0), (13.0, 13.0), (14.0, 14.0)]
+
+=== Test 26 ===
+Q: Số lượng bài viết có cảm xúc tiêu cực của từng nguồn?
+Model SQL: SELECT da.source_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+WHERE fa.sentiment = 'pos'
+GROUP BY da.source_name;
+[FAIL] Semantic mismatch
+GT rows: []
+Model rows: [('vietcetera', 2430.0), ('vjst', 1790.0)]
+
+=== Test 27 ===
+Q: Chủ đề nào có bài viết dài nhất theo số từ trong năm 2021?
+Model SQL: SELECT dt.topic_name, MAX(fa.word_count) AS max_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2021
+GROUP BY dt.topic_name
+ORDER BY MAX(fa.word_count) DESC
+LIMIT 1;
+[OK] Semantic match
+
+=== Test 28 ===
+Q: Có bao nhiêu bài viết có tiêu đề chứa 'môi trường' trong năm 2022?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'year'
+
+=== Test 29 ===
+Q: Tác giả nào có số bài viết trung bình mỗi tháng cao nhất trong năm 2022?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'month'; Undefined alias 'dd' used for column 'year'
+
+=== Test 30 ===
+Q: Số lượng bài viết mỗi ngày trong tháng 12 năm 2021?
+Model SQL: SELECT dd.day, dd.month, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2021 AND dd.month = 12
+GROUP BY dd.day, dd.month;
+[FAIL] Semantic mismatch
+GT rows: [('2021-12-07', 8.0), ('2021-12-08', 8.0), ('2021-12-20', 8.0)]
+Model rows: [(7.0, 12.0, 8.0), (8.0, 12.0, 8.0), (20.0, 12.0, 8.0)]
+
+=== Test 31 ===
+Q: Chủ đề nào ít bài viết nhất năm 2022?
+Model SQL: SELECT dt.topic_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+GROUP BY dt.topic_name
+ORDER BY COUNT(fa.article_id) ASC
+LIMIT 1;
+[OK] Semantic match
+
+=== Test 32 ===
+Q: Số bài viết trung bình mỗi ngày trong tháng 1 năm 2021?
+Model SQL: SELECT dd.day
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.month = 1 AND dd.year = 2021
+GROUP BY dd.day;
+[FAIL] Semantic mismatch
+GT rows: [(8.0,)]
+Model rows: [(7.0,)]
+
+=== Test 33 ===
+Q: Có bao nhiêu bài viết năm 2019 so với 2020?
+Model SQL: SELECT COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year IN ('2019', '2020');
+[FAIL] Semantic mismatch
+GT rows: [(2019.0, 48.0), (2020.0, 112.0)]
+Model rows: [(160.0,)]
+
+=== Test 34 ===
+Q: Top 3 tác giả viết nhiều nhất trong tháng 12/2022?
+Model SQL: SELECT au.author_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022 AND dd.month = 12
+GROUP BY au.author_name
+ORDER BY COUNT(fa.article_id) DESC
+LIMIT 3;
+[OK] Semantic match
+
+=== Test 35 ===
+Q: Có bao nhiêu bài viết chứa trên 2000 từ?
+Model SQL: SELECT COUNT(*) AS count_result
+FROM dw.fact_articles fa
+WHERE fa.word_count > 2000;
+[OK] Semantic match
+
+=== Test 36 ===
+Q: Nguồn nào có nhiều bài viết nhất trong năm 2021?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'year'
+
+=== Test 37 ===
+Q: Có bao nhiêu bài viết trong mỗi chủ đề năm 2020?
+Model SQL: SELECT dt.topic_name, dd.year, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2020
+GROUP BY dt.topic_name, dd.year;
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2020
+GROUP BY dt.topic_name, dd.year;
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2020
+GROUP BY dt.topic_name, dd.year;
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2020
+GROUP BY dt.topic_name, dd.year;
+WHERE dd.year = 2020
+GROUP BY dt.topic_name, dd.year;
+[FAIL] Semantic mismatch
+GROUP BY dt.topic_name, dd.year;
+[FAIL] Semantic mismatch
+[FAIL] Semantic mismatch
+GT rows: [('kinh-doanh-thoi-trang', 104.0), ('lanh-dao', 8.0)]
+Model rows: [('kinh-doanh-thoi-trang', 2020.0, 104.0), ('lanh-dao', 2020.0, 8.0)]
+
+=== Test 38 ===
+Q: Ngày nào có ít bài viết nhất trong năm 2022?
+Model SQL: SELECT dd.day, dd.month, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+Model rows: [('kinh-doanh-thoi-trang', 2020.0, 104.0), ('lanh-dao', 2020.0, 8.0)]
+
+=== Test 38 ===
+Q: Ngày nào có ít bài viết nhất trong năm 2022?
+Model SQL: SELECT dd.day, dd.month, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+=== Test 38 ===
+Q: Ngày nào có ít bài viết nhất trong năm 2022?
+Model SQL: SELECT dd.day, dd.month, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+Model SQL: SELECT dd.day, dd.month, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+WHERE dd.year = 2022
+GROUP BY dd.day, dd.month
+ORDER BY COUNT(fa.article_id) ASC
+LIMIT 1;
+[FAIL] Semantic mismatch
+GT rows: [('2022-06-08', 8.0)]
+Model rows: [(25.0, 10.0, 8.0)]
+
+=== Test 39 ===
+Q: Có bao nhiêu tác giả viết ít nhất 10 bài?
+Model SQL: SELECT au.author_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+GROUP BY au.author_name
+HAVING COUNT(fa.article_id) >= 10;
+[FAIL] Semantic mismatch
+GT rows: [(80.0,)]
+Model rows: [('ad', 40.0), ('akwaaba tùng', 32.0), ('anh minh', 32.0), ('anh tú', 24.0), ('bích hồ', 168.0), ('bích trâm', 64.0), ('bích việt', 24.0), ('bộ trưởng bộ kh&cn nguyễn mạnh hùng', 24.0), ('bộ trưởng nguyễn mạnh hùng', 32.0), ('cao vy', 296.0), ('chi nguyễn (the present writer)', 48.0), ('genesia ventures', 105.0), ('gia bách', 16.0), ('hao tran', 32.0), ('hiezle bual', 48.0), ('hiền lê', 160.0), ('hiền trang', 16.0), ('hiệp hưng nguyễn', 16.0), ('hoàng linh', 16.0), ('hoàng nguyễn (hoangthoughts)', 272.0), ('hải my', 24.0), ('khánh vy', 32.0), ('kim ngân', 16.0), ('l.h', 32.0), ('lh', 16.0), ('long vũ', 24.0), ('lorne carr-ellison', 16.0), ('lv lâm', 16.0), ('lê nghĩa', 16.0), ('minh châu', 16.0), ('minh ng', 88.0), ('minh thiện', 32.0), ('minh trang', 56.0), ('nguyễn kiệt', 13.0), ('nguyễn tuấn anh', 24.0), ('nguyễn xuân long', 16.0), ('ngọc diệp', 139.0), ('ngọc hà', 40.0), ('ngọc mai', 13.0), ('nhà nhiều cột', 16.0), ('nhóm pv', 32.0), ('nk', 16.0), ('nm', 24.0), ('phoebe phạm', 81.0), ('phong vũ', 24.0), ('phương thảo', 112.0), ('pt', 110.0), ('pv', 185.0), ('pv (ghi)', 16.0), ('qa', 185.0), ('rachel võ', 40.0), ('sovy han', 32.0), ('sơn hoàng', 120.0), ('tammy trương', 16.0), ('ted osius', 16.0), ('th', 122.0), ('thanh thảo', 24.0), ('thanh trúc', 166.0), ('thư trần', 40.0), ('thư vũ', 88.0), ('thảo lâm', 16.0), ('trà my', 32.0), ('trân trân', 128.0), ('trường thanh', 56.0), ('trần chi', 17.0), ('trọng hoàng', 40.0), ('ttxvn', 168.0), ('tuấn anh', 16.0), ('tường nguyễn (bamboo careers)', 120.0), ('tổng bí thư tô lâm', 16.0), ('valeria mertsalova', 16.0), ('vietcetera', 32.0), ('vvh', 24.0), ('vũ hoàng long (người kể chuyện)', 24.0), ('vũ thùy linh', 16.0), ('xuân diện', 17.0), ('yui', 16.0), ('đan nguyễn', 16.0), ('đào trung thành', 48.0), ('đạt hồ', 16.0)]
+
+=== Test 40 ===
+Q: Bài viết nào có tiêu đề chứa 'COVID'?
+Model SQL: SELECT da.title
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+WHERE da.title LIKE '%COVID%'
+GROUP BY da.title;
+[FAIL] Semantic mismatch
+GT rows: [('giữa covid-19, người kinh doanh thời trang direct-to-consumer nên làm gì?',), ('startup “mắc kẹt” giữa covid-19: lãnh đạo nên làm gì?',)]
+Model rows: [('giữa covid-19, người kinh doanh thời trang direct-to-consumer nên làm gì?',)]
+
+=== Test 41 ===
+Q: Có bao nhiêu bài viết vào tháng 7 năm 2023?
+Model SQL: SELECT dd.month, dd.year, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.month = 7 AND dd.year = 2023
+GROUP BY dd.month, dd.year;
+[FAIL] Semantic mismatch
+GT rows: [(16.0,)]
+Model rows: [(7.0, 2023.0, 16.0)]
+
+=== Test 42 ===
+Q: Tổng số bài viết theo từng tác giả trong năm 2022?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'year'
+
+=== Test 43 ===
+Q: Top 5 bài viết dài nhất?
+Model SQL: SELECT COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+ORDER BY fa.word_count DESC
+LIMIT 5;
+
+=== Test 44 ===
+Q: Có bao nhiêu tác giả viết trong tháng 3 năm 2021?
+Model SQL: SELECT au.author_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2021 AND dd.month = 3
+GROUP BY au.author_name;
+[FAIL] Semantic mismatch
+GT rows: [(3.0,)]
+Model rows: [('grace', 8.0), ('minh anh', 8.0), ('sovy han', 8.0)]
+
+=== Test 45 ===
+Q: Có bao nhiêu bài viết mỗi ngày trong tháng 6 năm 2022?
+Model SQL: SELECT dd.day, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.month = 6 AND dd.year = 2022
+GROUP BY dd.day;
+[FAIL] Semantic mismatch
+GT rows: [('2022-06-08', 8.0)]
+Model rows: [(8.0, 8.0)]
+
+=== Test 46 ===
+Q: Chủ đề phổ biến nhất trong năm 2023?
+Model SQL: -- PLAN_VALIDATION_ERROR: Schema validation failed -> Undefined alias 'dd' used for column 'year'
+
+=== Test 47 ===
+Q: Nguồn nào có số bài viết trung bình nhiều nhất mỗi tháng trong năm 2022?
+Model SQL: SELECT dd.year, dd.month, da.source_name
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+GROUP BY dd.year, dd.month, da.source_name
+ORDER BY avg(fa.word_count) DESC;
+[WARN] Missing raw_result, skip semantic check
+
+=== Test 48 ===
+Q: Tổng số bài viết của từng chủ đề trong năm 2021?
+Model SQL: SELECT dt.topic_name, COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2021
+GROUP BY dt.topic_name;
+[OK] Semantic match
+
+=== Test 49 ===
+Q: Ngày nào có bài viết dài nhất trong năm 2022?
+Model SQL: SELECT dd.day, dd.month, dd.year
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+WHERE dd.year = 2022
+GROUP BY dd.day, dd.month, dd.year
+ORDER BY max(fa.word_count) DESC
+LIMIT 1;
+[FAIL] Semantic mismatch
+GT rows: [('2022-04-01', 2006.0)]
+Model rows: [(1.0, 4.0, 2022.0)]
+
+=== Test 50 ===
+Q: Có bao nhiêu tác giả không có bài viết nào?
+Model SQL: SELECT COUNT(*) AS count_result
+FROM dw.fact_articles fa
+INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id;
+[FAIL] Semantic mismatch
+GT rows: [(0.0,)]
+Model rows: [(5277.0,)]
+
+==== Evaluation Summary ====
+Total questions: 50
+Valid SQL: 34/50 (68.0%)
+Semantic correct: 14/50 (28.0%)
+
+
+2025-09-24 16:56:51.523 | INFO:     Started server process [1]
+2025-09-24 16:56:51.523 | INFO:     Waiting for application startup.
+2025-09-24 16:56:51.523 | INFO:     Application startup complete.
+2025-09-24 16:56:51.523 | INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+2025-09-24 16:57:56.536 | 09:57:56 [WARNING] Ollama deconstructor timeout (attempt 1/2)
+2025-09-24 16:58:56.598 | 09:58:56 [WARNING] Ollama deconstructor timeout (attempt 2/2)
+2025-09-24 16:58:56.600 | INFO:     172.18.0.1:46426 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 16:59:56.668 | 09:59:56 [WARNING] Ollama deconstructor timeout (attempt 1/2)
+2025-09-24 17:00:54.701 | 10:00:54 [INFO] Raw Ollama response (deconstructor, attempt 2): Plan JSON:
+2025-09-24 17:00:54.701 | ```json
+2025-09-24 17:00:54.701 | {
+2025-09-24 17:00:54.701 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:00:54.701 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles", "dd": "dw.dim_date"},
+2025-09-24 17:00:54.701 |   "metric": "sum",
+2025-09-24 17:00:54.701 |   "metric_hint": "Tổng số từ theo nguồn trong năm 2022",
+2025-09-24 17:00:54.701 |   "dimensions": ["da.source_name"],
+2025-09-24 17:00:54.701 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:00:54.701 |   "order_by": {"column": "SUM(fa.word_count)", "direction": "DESC"},
+2025-09-24 17:00:54.701 |   "limit": 5
+2025-09-24 17:00:54.701 | }
+2025-09-24 17:00:54.701 | ```
+2025-09-24 17:00:54.710 | 10:00:54 [INFO] Executing SQL: SELECT da.source_name, SUM(fa.word_count) AS sum_result
+2025-09-24 17:00:54.710 | FROM dw.fact_articles fa
+2025-09-24 17:00:54.710 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:00:54.710 | INNER JOIN dw.di...
+2025-09-24 17:00:54.767 | 10:00:54 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:00:54.768 | INFO:     172.18.0.1:43714 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:00:54.774 | 10:00:54 [INFO] Executing SQL: SELECT da.source_name, SUM(fa.word_count) AS total_words FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id JOIN dw.dim_date d ON...
+2025-09-24 17:00:54.787 | INFO:     172.18.0.1:50704 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:00:54.787 | 10:00:54 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:01:31.775 | 10:01:31 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:01:31.775 | ```json
+2025-09-24 17:01:31.775 | {
+2025-09-24 17:01:31.775 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:01:31.775 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors"},
+2025-09-24 17:01:31.775 |   "metric": "max",
+2025-09-24 17:01:31.775 |   "metric_hint": "Thời gian đọc tốt nhất của bài viết của một tác giả",
+2025-09-24 17:01:31.775 |   "dimensions": ["au.author_name"],
+2025-09-24 17:01:31.775 |   "filters": [],
+2025-09-24 17:01:31.775 |   "order_by": {
+2025-09-24 17:01:31.775 |     "column": "fa.read_time",
+2025-09-24 17:01:31.775 |     "direction": "ASC"
+2025-09-24 17:01:31.775 |   },
+2025-09-24 17:01:31.775 |   "limit": 1
+2025-09-24 17:01:31.775 | }
+2025-09-24 17:01:31.775 | ```
+2025-09-24 17:01:31.776 | 10:01:31 [INFO] Executing SQL: SELECT au.author_name, MAX(fa.read_time) AS max_result
+2025-09-24 17:01:31.776 | FROM dw.fact_articles fa
+2025-09-24 17:01:31.776 | INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+2025-09-24 17:01:31.776 | GROUP BY au.author_n...
+2025-09-24 17:01:31.788 | 10:01:31 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:01:31.788 | INFO:     172.18.0.1:50718 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:01:31.794 | 10:01:31 [INFO] Executing SQL: SELECT da.author_name, fa.read_time FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id ORDER BY fa.read_time DESC LIMIT 1;
+2025-09-24 17:01:31.804 | 10:01:31 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:01:31.804 | INFO:     172.18.0.1:46028 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:02:23.744 | 10:02:23 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:02:23.744 | ```json
+2025-09-24 17:02:23.744 | {
+2025-09-24 17:02:23.744 |   "from_tables": ["dw.fact_articles", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:02:23.744 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:02:23.744 |   "metric": "count",
+2025-09-24 17:02:23.744 |   "metric_hint": "Số bài viết có từ khóa 'công nghệ' trong năm 2021",
+2025-09-24 17:02:23.744 |   "dimensions": [],
+2025-09-24 17:02:23.744 |   "filters": [{"column": "da.content", "operator": "LIKE", "value": "%công nghệ%"}],
+2025-09-24 17:02:23.744 |   "having": [{"column": "COUNT(fa.article_id)", "operator": ">=", "value": 1}],
+2025-09-24 17:02:23.744 |   "filters".push({"col
+2025-09-24 17:02:23.744 | 10:02:23 [ERROR] JSON parse failed after cleaning: Expecting ':' delimiter: line 9 column 12 (char 470). Raw candidate: {
+2025-09-24 17:02:23.744 |   "from_tables": ["dw.fact_articles", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:02:23.744 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:02:23.744 |   "metric": "count",
+2025-09-24 17:02:23.744 |   "metric_hint": "Số bài viết có từ khóa 'công nghệ' trong năm 2021",
+2025-09-24 17:02:23.744 |   "dimensions": [],
+2025-09-24 17:02:23.744 |   "fil
+2025-09-24 17:02:23.744 | INFO:     172.18.0.1:46044 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:03:05.404 | 10:03:05 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:03:05.404 | ```json
+2025-09-24 17:03:05.404 | {
+2025-09-24 17:03:05.404 |   "from_tables": ["dw.fact_articles", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:03:05.404 |   "aliases": {"fa": "dw.fact_articles", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:03:05.404 |   "metric": "avg",
+2025-09-24 17:03:05.404 |   "metric_hint": "Trung bình số từ theo chủ đề trong năm 2020",
+2025-09-24 17:03:05.404 |   "dimensions": ["dt.topic_name"],
+2025-09-24 17:03:05.404 |   "filters": [
+2025-09-24 17:03:05.404 |     {"column": "dd.year", "operator": "=", "value": 2020}
+2025-09-24 17:03:05.404 |   ],
+2025-09-24 17:03:05.404 |   "order_by": {
+2025-09-24 17:03:05.404 |     "column": "avg(fa.word_count)",
+2025-09-24 17:03:05.404 |     "direction": "ASC"
+2025-09-24 17:03:05.404 |   },
+2025-09-24 17:03:05.404 |   "limit": 1
+2025-09-24 17:03:05.404 | }
+2025-09-24 17:03:05.404 | ```
+2025-09-24 17:03:05.406 | 10:03:05 [INFO] Executing SQL: SELECT dt.topic_name, AVG(fa.word_count) AS avg_result
+2025-09-24 17:03:05.406 | FROM dw.fact_articles fa
+2025-09-24 17:03:05.406 | INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+2025-09-24 17:03:05.406 | INNER JOIN dw.dim_date ...
+2025-09-24 17:03:05.418 | 10:03:05 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:03:05.419 | INFO:     172.18.0.1:43230 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:03:05.424 | 10:03:05 [INFO] Executing SQL: SELECT dt.topic_name, AVG(fa.word_count) AS avg_words FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_...
+2025-09-24 17:03:05.436 | 10:03:05 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:03:05.436 | INFO:     172.18.0.1:42434 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:03:42.560 | 10:03:42 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:03:42.560 | ```json
+2025-09-24 17:03:42.560 | {
+2025-09-24 17:03:42.560 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:03:42.560 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:03:42.560 |   "metric": "count",
+2025-09-24 17:03:42.560 |   "metric_hint": "Số bài viết theo ngày",
+2025-09-24 17:03:42.560 |   "dimensions": ["dd.full_date"],
+2025-09-24 17:03:42.560 |   "filters": [{"column": "dd.day", "operator": "=", "value": 15}, {"column": "dd.month", "operator": "=", "value": 6}, {"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:03:42.560 |   "order_by": {},
+2025-09-24 17:03:42.560 |   "limit": null
+2025-09-24 17:03:42.560 | }
+2025-09-24 17:03:42.560 | ```
+2025-09-24 17:03:42.561 | 10:03:42 [INFO] Executing SQL: SELECT dd.full_date, COUNT(*) AS count_result
+2025-09-24 17:03:42.561 | FROM dw.fact_articles fa
+2025-09-24 17:03:42.561 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:03:42.561 | WHERE dd.day = 15 AND dd.month = 6 A...
+2025-09-24 17:03:42.570 | INFO:     172.18.0.1:42438 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:03:42.575 | 10:03:42 [INFO] Executing SQL: SELECT COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.full_date = '2022-06-15';
+2025-09-24 17:03:42.595 | 10:03:42 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:03:42.595 | INFO:     172.18.0.1:48746 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:04:13.622 | 10:04:13 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:04:13.622 | ```json
+2025-09-24 17:04:13.622 | {
+2025-09-24 17:04:13.622 |   "from_tables": ["dw.fact_articles", "dw.dim_topics"],
+2025-09-24 17:04:13.622 |   "aliases": {"fa": "dw.fact_articles", "dt": "dw.dim_topics"},
+2025-09-24 17:04:13.622 |   "metric": "sum",
+2025-09-24 17:04:13.622 |   "metric_hint": "Tổng thời gian đọc theo chủ đề",
+2025-09-24 17:04:13.622 |   "dimensions": ["dt.topic_name"],
+2025-09-24 17:04:13.622 |   "filters": [],
+2025-09-24 17:04:13.622 |   "order_by": {"column": "sum(fa.read_time)", "direction": "ASC"},
+2025-09-24 17:04:13.622 |   "limit": null
+2025-09-24 17:04:13.622 | }
+2025-09-24 17:04:13.622 | ```
+2025-09-24 17:04:13.623 | 10:04:13 [INFO] Executing SQL: SELECT dt.topic_name, SUM(fa.read_time) AS sum_result
+2025-09-24 17:04:13.623 | FROM dw.fact_articles fa
+2025-09-24 17:04:13.623 | INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+2025-09-24 17:04:13.623 | GROUP BY dt.topic_name
+2025-09-24 17:04:13.623 | O...
+2025-09-24 17:04:13.634 | 10:04:13 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:04:13.635 | INFO:     172.18.0.1:48748 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:04:13.640 | 10:04:13 [INFO] Executing SQL: SELECT dt.topic_name, SUM(fa.read_time) AS total_read_time FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id GROUP BY dt.topic_name;
+2025-09-24 17:04:13.650 | 10:04:13 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:04:13.650 | INFO:     172.18.0.1:39672 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:04:57.256 | 10:04:57 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:04:57.256 | ```json
+2025-09-24 17:04:57.256 | {
+2025-09-24 17:04:57.256 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:04:57.256 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors"},
+2025-09-24 17:04:57.256 |   "metric": "max",
+2025-09-24 17:04:57.256 |   "metric_hint": "Số bài viết cảm xúc tiêu cực nhất của một tác giả trong năm 2023",
+2025-09-24 17:04:57.256 |   "dimensions": ["au.author_name"],
+2025-09-24 17:04:57.256 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2023}, {"column": "fa.sentiment", "operator": "=", "value": "pos"}],
+2025-09-24 17:04:57.256 |   "order_by": {"column": "max(fa.word_count)", "direction": "DESC"},
+2025-09-24 17:04:57.256 |   "limit": 1
+2025-09-24 17:04:57.256 | }
+2025-09-24 17:04:57.256 | ``
+2025-09-24 17:04:57.257 | INFO:     172.18.0.1:39680 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:05:39.096 | 10:05:39 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:05:39.096 | ```json
+2025-09-24 17:05:39.096 | {
+2025-09-24 17:05:39.096 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:05:39.096 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:05:39.096 |   "metric": "count",
+2025-09-24 17:05:39.096 |   "metric_hint": "Số lượng bài viết có thời gian đọc dưới 5 phút",
+2025-09-24 17:05:39.096 |   "dimensions": [],
+2025-09-24 17:05:39.096 |   "filters": [
+2025-09-24 17:05:39.096 |     {"column": "fa.read_time", "operator": "<", "value": 300},
+2025-09-24 17:05:39.096 |     {"column": "dd.day", "operator": ">", 1},
+2025-09-24 17:05:39.096 |     {"column": "dd.month", "operator": ">", 1},
+2025-09-24 17:05:39.096 |     {"column": "dd.year", "operator": ">", 2020}
+2025-09-24 17:05:39.096 |   ],
+2025-09-24 17:05:39.096 |   "order_by": {},
+2025-09-24 17:05:39.096 |   "limit": null
+2025-09-24 17:05:39.096 | }
+2025-09-24 17:05:39.096 | ```
+2025-09-24 17:05:39.096 | 10:05:39 [ERROR] JSON parse failed after cleaning: Expecting property name enclosed in double quotes: line 9 column 43 (char 331). Raw candidate: {
+2025-09-24 17:05:39.096 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:05:39.096 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:05:39.096 |   "metric": "count",
+2025-09-24 17:05:39.096 |   "metric_hint": "Số lượng bài viết có thời gian đọc dưới 5 phút",
+2025-09-24 17:05:39.096 |   "dimensions": [],
+2025-09-24 17:05:39.096 |   "filters": [
+2025-09-24 17:05:39.096 |     {"column": "fa.read_time", "operator": "<", "value": 300},
+2025-09-24 17:05:39.096 |     {"colum
+2025-09-24 17:05:39.097 | INFO:     172.18.0.1:38422 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:06:28.839 | 10:06:28 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:06:28.839 | ```json
+2025-09-24 17:06:28.839 | {
+2025-09-24 17:06:28.839 |   "from_tables": ["dw.fact_articles", "dw.dim_articles", "dw.dim_date"],
+2025-09-24 17:06:28.839 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles", "dd": "dw.dim_date"},
+2025-09-24 17:06:28.839 |   "metric": "avg",
+2025-09-24 17:06:28.839 |   "metric_hint": "Trung bình số từ của nguồn trong tháng 10/2022",
+2025-09-24 17:06:28.839 |   "dimensions": ["da.source_name"],
+2025-09-24 17:06:28.839 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}, {"column": "dd.month", "operator": "=", "value": 10}],
+2025-09-24 17:06:28.839 |   "having": [{"column": "fa.sentiment", "operator": "=", "value": "neutra
+2025-09-24 17:06:28.841 | 10:06:28 [INFO] Executing SQL: SELECT da.source_name, AVG(fa.word_count) AS avg_result
+2025-09-24 17:06:28.841 | FROM dw.fact_articles fa
+2025-09-24 17:06:28.841 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:06:28.841 | INNER JOIN dw.di...
+2025-09-24 17:06:28.851 | INFO:     172.18.0.1:53878 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:07:16.488 | 10:07:16 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:07:16.488 | ```json
+2025-09-24 17:07:16.488 | {
+2025-09-24 17:07:16.488 |   "from_tables": ["dw.fact_articles", "dw.dim_authors", "dw.dim_date"],
+2025-09-24 17:07:16.488 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors", "dd": "dw.dim_date"},
+2025-09-24 17:07:16.488 |   "metric": "count",
+2025-09-24 17:07:16.488 |   "metric_hint": "Số tác giả viết ít nhất 5 bài trong năm 2021",
+2025-09-24 17:07:16.488 |   "dimensions": ["au.author_name"],
+2025-09-24 17:07:16.488 |   "filters": [
+2025-09-24 17:07:16.488 |     {"column": "dd.year", "operator": "=", "value": 2021},
+2025-09-24 17:07:16.488 |     {"column": "fa.article_id", "operator": "GROUP BY", "value": ""}
+2025-09-24 17:07:16.488 |   ],
+2025-09-24 17:07:16.488 |   "having": [{"column": "COUNT(fa.article_id)", "op
+2025-09-24 17:07:16.489 | 10:07:16 [INFO] Executing SQL: SELECT au.author_name, COUNT(*) AS count_result
+2025-09-24 17:07:16.489 | FROM dw.fact_articles fa
+2025-09-24 17:07:16.489 | INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+2025-09-24 17:07:16.489 | INNER JOIN dw.dim_date dd O...
+2025-09-24 17:07:16.499 | INFO:     172.18.0.1:51238 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:07:52.731 | 10:07:52 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:07:52.731 | ```json
+2025-09-24 17:07:52.731 | {
+2025-09-24 17:07:52.731 |   "from_tables": ["dw.fact_articles", "dw.dim_articles"],
+2025-09-24 17:07:52.731 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:07:52.731 |   "metric": null,
+2025-09-24 17:07:52.731 |   "metric_hint": "Không có phép tính đo lường",
+2025-09-24 17:07:52.731 |   "dimensions": ["da.title"],
+2025-09-24 17:07:52.731 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2023}, {"column": "da.title", "operator": "LIKE", "value": "%AI%"}],
+2025-09-24 17:07:52.731 |   "order_by": {},
+2025-09-24 17:07:52.731 |   "limit": null
+2025-09-24 17:07:52.731 | }
+2025-09-24 17:07:52.731 | ```
+2025-09-24 17:07:52.731 | INFO:     172.18.0.1:38866 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:08:22.945 | 10:08:22 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:08:22.945 | ```json
+2025-09-24 17:08:22.945 | {
+2025-09-24 17:08:22.945 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:08:22.945 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:08:22.945 |   "metric": "count",
+2025-09-24 17:08:22.945 |   "metric_hint": "Số lượng bài viết theo năm và cảm xúc",
+2025-09-24 17:08:22.945 |   "dimensions": ["dd.year", "fa.sentiment"],
+2025-09-24 17:08:22.945 |   "filters": [],
+2025-09-24 17:08:22.945 |   "order_by": {"column": "dd.year", "direction": "ASC"},
+2025-09-24 17:08:22.945 |   "limit": null
+2025-09-24 17:08:22.945 | }
+2025-09-24 17:08:22.945 | ```
+2025-09-24 17:08:22.946 | INFO:     172.18.0.1:52452 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:09:03.554 | 10:09:03 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:09:03.554 | ```json
+2025-09-24 17:09:03.554 | {
+2025-09-24 17:09:03.554 |   "from_tables": ["dw.fact_articles", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:09:03.554 |   "aliases": {"fa": "dw.fact_articles", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:09:03.554 |   "metric": "sum",
+2025-09-24 17:09:03.554 |   "metric_hint": "Tổng thời gian đọc theo chủ đề trong năm 2022",
+2025-09-24 17:09:03.554 |   "dimensions": ["dt.topic_name"],
+2025-09-24 17:09:03.554 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:09:03.554 |   "order_by": {"column": "SUM(fa.read_time)", "direction": "ASC"},
+2025-09-24 17:09:03.554 |   "limit": 1
+2025-09-24 17:09:03.554 | }
+2025-09-24 17:09:03.554 | ```
+2025-09-24 17:09:03.556 | 10:09:03 [INFO] Executing SQL: SELECT dt.topic_name, SUM(fa.read_time) AS sum_result
+2025-09-24 17:09:03.556 | FROM dw.fact_articles fa
+2025-09-24 17:09:03.556 | INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+2025-09-24 17:09:03.556 | INNER JOIN dw.dim_date d...
+2025-09-24 17:09:03.567 | 10:09:03 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:09:03.567 | INFO:     172.18.0.1:36774 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:09:03.572 | 10:09:03 [INFO] Executing SQL: SELECT dt.topic_name, SUM(fa.read_time) AS total_read_time FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa....
+2025-09-24 17:09:03.583 | 10:09:03 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:09:03.584 | INFO:     172.18.0.1:42544 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:09:34.532 | 10:09:34 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:09:34.532 | ```json
+2025-09-24 17:09:34.532 | {
+2025-09-24 17:09:34.532 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:09:34.532 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors"},
+2025-09-24 17:09:34.532 |   "metric": "avg",
+2025-09-24 17:09:34.532 |   "metric_hint": "Trung bình thời gian đọc theo tác giả",
+2025-09-24 17:09:34.532 |   "dimensions": ["au.author_name"],
+2025-09-24 17:09:34.532 |   "filters": [],
+2025-09-24 17:09:34.532 |   "order_by": {"column": "avg(fa.read_time)", "direction": "DESC"},
+2025-09-24 17:09:34.532 |   "limit": 1
+2025-09-24 17:09:34.532 | }
+2025-09-24 17:09:34.532 | ```
+2025-09-24 17:09:34.533 | 10:09:34 [INFO] Executing SQL: SELECT au.author_name, AVG(fa.read_time) AS avg_result
+2025-09-24 17:09:34.534 | FROM dw.fact_articles fa
+2025-09-24 17:09:34.534 | INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+2025-09-24 17:09:34.534 | GROUP BY au.author_n...
+2025-09-24 17:09:34.545 | 10:09:34 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:09:34.546 | INFO:     172.18.0.1:42552 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:09:34.551 | 10:09:34 [INFO] Executing SQL: SELECT da.author_name, AVG(fa.read_time) AS avg_read_time FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id GROUP BY da.author_name...
+2025-09-24 17:09:34.562 | 10:09:34 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:09:34.563 | INFO:     172.18.0.1:41020 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:10:15.804 | 10:10:15 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:10:15.804 | ```json
+2025-09-24 17:10:15.804 | {
+2025-09-24 17:10:15.804 |   "from_tables": ["dw.fact_articles", "dw.dim_date", "dw.dim_articles"],
+2025-09-24 17:10:15.804 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date", "da": "dw.dim_articles"},
+2025-09-24 17:10:15.804 |   "metric": "count",
+2025-09-24 17:10:15.804 |   "metric_hint": "Số lượng bài viết theo nguồn trong tháng 2 năm 2023",
+2025-09-24 17:10:15.804 |   "dimensions": ["da.source_name"],
+2025-09-24 17:10:15.804 |   "filters": [{"column": "dd.month", "operator": "=", "value": 2}, {"column": "dd.year", "operator": "=", "value": 2023}],
+2025-09-24 17:10:15.804 |   "order_by": {},
+2025-09-24 17:10:15.804 |   "limit": null
+2025-09-24 17:10:15.804 | }
+2025-09-24 17:10:15.804 | ```
+2025-09-24 17:10:15.805 | 10:10:15 [INFO] Executing SQL: SELECT da.source_name, COUNT(*) AS count_result
+2025-09-24 17:10:15.805 | FROM dw.fact_articles fa
+2025-09-24 17:10:15.805 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:10:15.805 | INNER JOIN dw.dim_date d...
+2025-09-24 17:10:15.816 | 10:10:15 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:10:15.817 | INFO:     172.18.0.1:41022 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:10:15.822 | 10:10:15 [INFO] Executing SQL: SELECT da.source_name, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id JOIN dw.dim_date d ON fa.date_id = d.date_id W...
+2025-09-24 17:10:15.833 | 10:10:15 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:10:15.833 | INFO:     172.18.0.1:39298 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:10:54.651 | 10:10:54 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:10:54.651 | ```json
+2025-09-24 17:10:54.651 | {
+2025-09-24 17:10:54.651 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:10:54.651 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles", "dd": "dw.dim_date"},
+2025-09-24 17:10:54.651 |   "metric": "count",
+2025-09-24 17:10:54.651 |   "metric_hint": "Số bài viết có số từ dưới 500 trong năm 2020",
+2025-09-24 17:10:54.651 |   "dimensions": [],
+2025-09-24 17:10:54.651 |   "filters": [
+2025-09-24 17:10:54.651 |     {"column": "dd.year", "operator": "=", "value": 2020},
+2025-09-24 17:10:54.651 |     {"column": "fa.word_count", "operator": "<", "value": 500}
+2025-09-24 17:10:54.651 |   ],
+2025-09-24 17:10:54.651 |   "order_by": {},
+2025-09-24 17:10:54.651 |   "limit": null
+2025-09-24 17:10:54.651 | }
+2025-09-24 17:10:54.651 | ```
+2025-09-24 17:10:54.652 | 10:10:54 [INFO] Executing SQL: SELECT COUNT(*) AS count_result
+2025-09-24 17:10:54.652 | FROM dw.fact_articles fa
+2025-09-24 17:10:54.652 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:10:54.652 | INNER JOIN dw.dim_date dd ON fa.date_id ...
+2025-09-24 17:10:54.663 | 10:10:54 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:10:54.663 | INFO:     172.18.0.1:39308 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:10:54.668 | 10:10:54 [INFO] Executing SQL: SELECT COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE fa.word_count < 500 AND d.year = 2020;
+2025-09-24 17:10:54.679 | 10:10:54 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:10:54.679 | INFO:     172.18.0.1:54108 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:11:29.707 | 10:11:29 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:11:29.707 | ```json
+2025-09-24 17:11:29.707 | {
+2025-09-24 17:11:29.707 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:11:29.707 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:11:29.707 |   "metric": "count",
+2025-09-24 17:11:29.707 |   "metric_hint": "Số bài viết cảm xúc tích cực theo ngày",
+2025-09-24 17:11:29.707 |   "dimensions": ["dd.full_date"],
+2025-09-24 17:11:29.707 |   "filters": [{"column": "fa.sentiment", "operator": "=", "value": "pos"}],
+2025-09-24 17:11:29.707 |   "order_by": {"column": "COUNT(fa.article_id)", "direction": "DESC"},
+2025-09-24 17:11:29.707 |   "limit": 3
+2025-09-24 17:11:29.707 | }
+2025-09-24 17:11:29.707 | ```
+2025-09-24 17:11:29.708 | 10:11:29 [INFO] Executing SQL: SELECT dd.full_date, COUNT(*) AS count_result
+2025-09-24 17:11:29.708 | FROM dw.fact_articles fa
+2025-09-24 17:11:29.708 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:11:29.708 | WHERE fa.sentiment = 'pos'
+2025-09-24 17:11:29.708 | GROUP BY ...
+2025-09-24 17:11:29.719 | 10:11:29 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:11:29.719 | INFO:     172.18.0.1:54122 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:11:29.725 | 10:11:29 [INFO] Executing SQL: SELECT d.full_date, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE fa.sentiment = 'pos' GROUP BY d.full_date ORDER ...
+2025-09-24 17:11:29.737 | 10:11:29 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:11:29.737 | INFO:     172.18.0.1:37276 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:11:58.176 | 10:11:58 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:11:58.176 | ```json
+2025-09-24 17:11:58.176 | {
+2025-09-24 17:11:58.176 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:11:58.176 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:11:58.176 |   "metric": "avg",
+2025-09-24 17:11:58.176 |   "metric_hint": "Trung bình số từ theo nguồn",
+2025-09-24 17:11:58.176 |   "dimensions": ["da.source_name"],
+2025-09-24 17:11:58.176 |   "filters": [],
+2025-09-24 17:11:58.176 |   "order_by": {"column": "avg(fa.word_count)", "direction": "ASC"},
+2025-09-24 17:11:58.176 |   "limit": 1
+2025-09-24 17:11:58.176 | }
+2025-09-24 17:11:58.176 | ```
+2025-09-24 17:11:58.177 | 10:11:58 [INFO] Executing SQL: SELECT da.source_name, AVG(fa.word_count) AS avg_result
+2025-09-24 17:11:58.177 | FROM dw.fact_articles fa
+2025-09-24 17:11:58.177 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:11:58.177 | GROUP BY da.sour...
+2025-09-24 17:11:58.190 | 10:11:58 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:11:58.190 | INFO:     172.18.0.1:37290 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:11:58.196 | 10:11:58 [INFO] Executing SQL: SELECT da.source_name, AVG(fa.word_count) AS avg_words FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id GROUP BY da.source_name...
+2025-09-24 17:11:58.210 | 10:11:58 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:11:58.210 | INFO:     172.18.0.1:58202 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:12:45.724 | 10:12:45 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:12:45.724 | ```json
+2025-09-24 17:12:45.724 | {
+2025-09-24 17:12:45.724 |   "from_tables": ["dw.fact_articles", "dw.dim_authors", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:12:45.724 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles", "au": "dw.dim_authors", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:12:45.724 |   "metric": "count",
+2025-09-24 17:12:45.724 |   "metric_hint": "Số lượng tác giả duy nhất theo chủ đề trong năm 2022",
+2025-09-24 17:12:45.724 |   "dimensions": ["dt.topic_name"],
+2025-09-24 17:12:45.724 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}, {"column": "au.author_id", "operator": "DISTINCT"}],
+2025-09-24 17:12:45.724 |   "or
+2025-09-24 17:12:45.726 | 10:12:45 [INFO] Executing SQL: SELECT dt.topic_name, COUNT(*) AS count_result
+2025-09-24 17:12:45.726 | FROM dw.fact_articles fa
+2025-09-24 17:12:45.726 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:12:45.726 | INNER JOIN dw.dim_authors...
+2025-09-24 17:12:45.742 | 10:12:45 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:12:45.743 | INFO:     172.18.0.1:58210 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:12:45.751 | 10:12:45 [INFO] Executing SQL: SELECT dt.topic_name, COUNT(DISTINCT fa.author_id) FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id ...
+2025-09-24 17:12:45.764 | 10:12:45 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:12:45.764 | INFO:     172.18.0.1:44968 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:13:16.779 | 10:13:16 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:13:16.779 | ```json
+2025-09-24 17:13:16.779 | {
+2025-09-24 17:13:16.779 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:13:16.779 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:13:16.779 |   "metric": "count",
+2025-09-24 17:13:16.779 |   "metric_hint": "Số bài viết có từ khóa 'sức khỏe'",
+2025-09-24 17:13:16.779 |   "dimensions": [],
+2025-09-24 17:13:16.779 |   "filters": [{"column": "da.content", "operator": "LIKE", "value": "%sức khỏe%"}],
+2025-09-24 17:13:16.779 |   "order_by": {},
+2025-09-24 17:13:16.779 |   "limit": null
+2025-09-24 17:13:16.779 | }
+2025-09-24 17:13:16.779 | ```
+2025-09-24 17:13:16.780 | 10:13:16 [INFO] Executing SQL: SELECT COUNT(*) AS count_result
+2025-09-24 17:13:16.781 | FROM dw.fact_articles fa
+2025-09-24 17:13:16.781 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:13:16.781 | WHERE da.content LIKE '%sức khỏe%';
+2025-09-24 17:13:16.793 | INFO:     172.18.0.1:44982 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:13:55.384 | 10:13:55 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:13:55.384 | ```json
+2025-09-24 17:13:55.384 | {
+2025-09-24 17:13:55.384 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:13:55.384 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:13:55.384 |   "metric": "sum",
+2025-09-24 17:13:55.384 |   "metric_hint": "Tổng số từ của các bài viết trong tháng 11 năm 2021",
+2025-09-24 17:13:55.384 |   "dimensions": ["dd.year", "dd.month"],
+2025-09-24 17:13:55.384 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2021}, {"column": "dd.month", "operator": "=", "value": 11}],
+2025-09-24 17:13:55.384 |   "order_by": {},
+2025-09-24 17:13:55.384 |   "limit": null
+2025-09-24 17:13:55.384 | }
+2025-09-24 17:13:55.384 | ```
+2025-09-24 17:13:55.386 | 10:13:55 [INFO] Executing SQL: SELECT dd.year, dd.month, SUM(fa.word_count) AS sum_result
+2025-09-24 17:13:55.386 | FROM dw.fact_articles fa
+2025-09-24 17:13:55.386 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:13:55.386 | WHERE dd.year = 2021 AN...
+2025-09-24 17:13:55.396 | 10:13:55 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:13:55.396 | INFO:     172.18.0.1:54356 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:13:55.402 | 10:13:55 [INFO] Executing SQL: SELECT SUM(fa.word_count) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 AND d.month = 11;
+2025-09-24 17:13:55.411 | 10:13:55 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:13:55.412 | INFO:     172.18.0.1:37440 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:14:42.674 | 10:14:42 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:14:42.674 | ```json
+2025-09-24 17:14:42.674 | {
+2025-09-24 17:14:42.674 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:14:42.674 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors"},
+2025-09-24 17:14:42.674 |   "metric": "count",
+2025-09-24 17:14:42.674 |   "metric_hint": "Số bài viết của tác giả giảm nhiều nhất từ năm 2021 sang 2022",
+2025-09-24 17:14:42.674 |   "dimensions": ["au.author_name"],
+2025-09-24 17:14:42.674 |   "filters": [
+2025-09-24 17:14:42.674 |     {"column": "dd.year", "operator": "IN", "value": [2021, 2022]},
+2025-09-24 17:14:42.674 |     {"column": "fa.article_id", "operator": "OLDER", "value": null}
+2025-09-24 17:14:42.674 |   ],
+2025-09-24 17:14:42.674 |   "order_by": {
+2025-09-24 17:14:42.674 |     "column": "COUNT(fa.article_id)",
+2025-09-24 17:14:42.674 |     "dir
+2025-09-24 17:14:42.674 | INFO:     172.18.0.1:37454 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:15:17.155 | 10:15:17 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:15:17.155 | ```json
+2025-09-24 17:15:17.155 | {
+2025-09-24 17:15:17.155 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:15:17.155 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:15:17.155 |   "metric": "count",
+2025-09-24 17:15:17.155 |   "metric_hint": "Số ngày không có bài viết trong năm 2020",
+2025-09-24 17:15:17.155 |   "dimensions": [],
+2025-09-24 17:15:17.155 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2020}, {"column": "fa.article_id", "operator": "IS NULL"}],
+2025-09-24 17:15:17.155 |   "order_by": {},
+2025-09-24 17:15:17.155 |   "limit": null
+2025-09-24 17:15:17.155 | }
+2025-09-24 17:15:17.155 | ```
+2025-09-24 17:15:17.156 | 10:15:17 [INFO] Executing SQL: SELECT COUNT(*) AS count_result
+2025-09-24 17:15:17.156 | FROM dw.fact_articles fa
+2025-09-24 17:15:17.156 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:15:17.156 | WHERE dd.year = 2020;
+2025-09-24 17:15:17.168 | 10:15:17 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:15:17.169 | INFO:     172.18.0.1:38072 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:15:17.174 | 10:15:17 [INFO] Executing SQL: SELECT COUNT(*) FROM dw.dim_date d WHERE d.year = 2020 AND d.date_id NOT IN (SELECT DISTINCT fa.date_id FROM dw.fact_articles fa);
+2025-09-24 17:15:17.184 | 10:15:17 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:15:17.184 | INFO:     172.18.0.1:44144 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:15:51.594 | 10:15:51 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:15:51.594 | ```json
+2025-09-24 17:15:51.594 | {
+2025-09-24 17:15:51.594 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:15:51.594 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:15:51.594 |   "metric": "max",
+2025-09-24 17:15:51.594 |   "metric_hint": "Thời gian đọc lớn nhất trong năm 2023",
+2025-09-24 17:15:51.594 |   "dimensions": ["fa.read_time"],
+2025-09-24 17:15:51.594 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2023}],
+2025-09-24 17:15:51.594 |   "order_by": {"column": "max(fa.read_time)", "direction": "DESC"},
+2025-09-24 17:15:51.594 |   "limit": 5
+2025-09-24 17:15:51.594 | }
+2025-09-24 17:15:51.594 | ```
+2025-09-24 17:15:51.595 | 10:15:51 [INFO] Executing SQL: SELECT fa.read_time, MAX(fa.read_time) AS max_result
+2025-09-24 17:15:51.595 | FROM dw.fact_articles fa
+2025-09-24 17:15:51.595 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:15:51.595 | WHERE dd.year = 2023
+2025-09-24 17:15:51.595 | GROUP BY...
+2025-09-24 17:15:51.605 | 10:15:51 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:15:51.606 | INFO:     172.18.0.1:44160 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:15:51.611 | 10:15:51 [INFO] Executing SQL: SELECT da.title, fa.read_time FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHE...
+2025-09-24 17:15:51.622 | 10:15:51 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:15:51.623 | INFO:     172.18.0.1:55816 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:16:23.404 | 10:16:23 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:16:23.405 | ```json
+2025-09-24 17:16:23.405 | {
+2025-09-24 17:16:23.405 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:16:23.405 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:16:23.405 |   "metric": "count",
+2025-09-24 17:16:23.405 |   "metric_hint": "Số lượng bài viết có cảm xúc tiêu cực theo nguồn",
+2025-09-24 17:16:23.405 |   "dimensions": ["da.source_name"],
+2025-09-24 17:16:23.405 |   "filters": [{"column": "fa.sentiment", "operator": "=", "value": "pos"}],
+2025-09-24 17:16:23.405 |   "order_by": {},
+2025-09-24 17:16:23.405 |   "limit": null
+2025-09-24 17:16:23.405 | }
+2025-09-24 17:16:23.405 | ```
+2025-09-24 17:16:23.406 | 10:16:23 [INFO] Executing SQL: SELECT da.source_name, COUNT(*) AS count_result
+2025-09-24 17:16:23.406 | FROM dw.fact_articles fa
+2025-09-24 17:16:23.406 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:16:23.406 | WHERE fa.sentiment = 'po...
+2025-09-24 17:16:23.418 | 10:16:23 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:16:23.419 | INFO:     172.18.0.1:55822 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:16:23.424 | 10:16:23 [INFO] Executing SQL: SELECT da.source_name, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id WHERE fa.sentiment = 'negative' GROUP BY da.so...
+2025-09-24 17:16:23.435 | INFO:     172.18.0.1:58676 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:17:02.902 | 10:17:02 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:17:02.902 | ```json
+2025-09-24 17:17:02.902 | {
+2025-09-24 17:17:02.902 |   "from_tables": ["dw.fact_articles", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:17:02.902 |   "aliases": {"fa": "dw.fact_articles", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:17:02.902 |   "metric": "max",
+2025-09-24 17:17:02.902 |   "metric_hint": "Số từ lớn nhất theo chủ đề trong năm 2021",
+2025-09-24 17:17:02.902 |   "dimensions": ["dt.topic_name"],
+2025-09-24 17:17:02.902 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2021}],
+2025-09-24 17:17:02.902 |   "order_by": {"column": "max(fa.word_count)", "direction": "DESC"},
+2025-09-24 17:17:02.902 |   "limit": 1
+2025-09-24 17:17:02.902 | }
+2025-09-24 17:17:02.902 | ```
+2025-09-24 17:17:02.904 | 10:17:02 [INFO] Executing SQL: SELECT dt.topic_name, MAX(fa.word_count) AS max_result
+2025-09-24 17:17:02.904 | FROM dw.fact_articles fa
+2025-09-24 17:17:02.904 | INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+2025-09-24 17:17:02.904 | INNER JOIN dw.dim_date ...
+2025-09-24 17:17:02.915 | 10:17:02 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:17:02.915 | INFO:     172.18.0.1:58682 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:17:02.921 | 10:17:02 [INFO] Executing SQL: SELECT dt.topic_name, MAX(fa.word_count) FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id = d.date_i...
+2025-09-24 17:17:02.931 | 10:17:02 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:17:02.932 | INFO:     172.18.0.1:45440 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:17:43.590 | 10:17:43 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:17:43.590 | ```json
+2025-09-24 17:17:43.590 | {
+2025-09-24 17:17:43.590 |   "from_tables": ["dw.fact_articles", "dw.dim_articles"],
+2025-09-24 17:17:43.590 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:17:43.590 |   "metric": "count",
+2025-09-24 17:17:43.590 |   "metric_hint": "Số bài viết có tiêu đề chứa 'môi trường' trong năm 2022",
+2025-09-24 17:17:43.590 |   "dimensions": ["da.title"],
+2025-09-24 17:17:43.590 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}, {"column": "da.title", "operator": "LIKE", "value": "%môi trường%"}],
+2025-09-24 17:17:43.590 |   "order_by": {},
+2025-09-24 17:17:43.590 |   "limit": null
+2025-09-24 17:17:43.590 | }
+2025-09-24 17:17:43.590 | ```
+2025-09-24 17:17:43.591 | INFO:     172.18.0.1:45446 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:18:22.061 | 10:18:22 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:18:22.061 | ```json
+2025-09-24 17:18:22.061 | {
+2025-09-24 17:18:22.061 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:18:22.061 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors"},
+2025-09-24 17:18:22.061 |   "metric": "avg",
+2025-09-24 17:18:22.061 |   "metric_hint": "Trung bình số bài viết mỗi tháng của tác giả",
+2025-09-24 17:18:22.061 |   "dimensions": ["au.author_name", "dd.year", "dd.month"],
+2025-09-24 17:18:22.061 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:18:22.061 |   "order_by": {"column": "avg(fa.word_count)", "direction": "DESC"},
+2025-09-24 17:18:22.061 |   "limit": 1
+2025-09-24 17:18:22.061 | }
+2025-09-24 17:18:22.061 | ```
+2025-09-24 17:18:22.062 | INFO:     172.18.0.1:38548 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:19:00.105 | 10:19:00 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:19:00.105 | ```json
+2025-09-24 17:19:00.106 | {
+2025-09-24 17:19:00.106 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:19:00.106 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:19:00.106 |   "metric": "count",
+2025-09-24 17:19:00.106 |   "metric_hint": "Số lượng bài viết mỗi ngày trong tháng 12 năm 2021",
+2025-09-24 17:19:00.106 |   "dimensions": ["dd.day", "dd.month"],
+2025-09-24 17:19:00.106 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2021}, {"column": "dd.month", "operator": "=", "value": 12}],
+2025-09-24 17:19:00.106 |   "order_by": {},
+2025-09-24 17:19:00.106 |   "limit": null
+2025-09-24 17:19:00.106 | }
+2025-09-24 17:19:00.106 | ```
+2025-09-24 17:19:00.107 | 10:19:00 [INFO] Executing SQL: SELECT dd.day, dd.month, COUNT(*) AS count_result
+2025-09-24 17:19:00.107 | FROM dw.fact_articles fa
+2025-09-24 17:19:00.107 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:19:00.107 | WHERE dd.year = 2021 AND dd.mont...
+2025-09-24 17:19:00.116 | 10:19:00 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:19:00.117 | INFO:     172.18.0.1:35446 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:19:00.122 | 10:19:00 [INFO] Executing SQL: SELECT d.full_date, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 AND d.month = 12 GROUP BY d.full_date ORD...
+2025-09-24 17:19:00.132 | 10:19:00 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:19:00.132 | INFO:     172.18.0.1:46746 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:19:38.224 | 10:19:38 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:19:38.224 | ```json
+2025-09-24 17:19:38.224 | {
+2025-09-24 17:19:38.224 |   "from_tables": ["dw.fact_articles", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:19:38.224 |   "aliases": {"fa": "dw.fact_articles", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:19:38.224 |   "metric": "count",
+2025-09-24 17:19:38.224 |   "metric_hint": "Số bài viết theo chủ đề trong năm 2022",
+2025-09-24 17:19:38.224 |   "dimensions": ["dt.topic_name"],
+2025-09-24 17:19:38.224 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:19:38.224 |   "order_by": {"column": "COUNT(fa.article_id)", "direction": "ASC"},
+2025-09-24 17:19:38.224 |   "limit": 1
+2025-09-24 17:19:38.224 | }
+2025-09-24 17:19:38.224 | ```
+2025-09-24 17:19:38.225 | 10:19:38 [INFO] Executing SQL: SELECT dt.topic_name, COUNT(*) AS count_result
+2025-09-24 17:19:38.226 | FROM dw.fact_articles fa
+2025-09-24 17:19:38.226 | INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+2025-09-24 17:19:38.226 | INNER JOIN dw.dim_date dd ON fa...
+2025-09-24 17:19:38.236 | 10:19:38 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:19:38.236 | INFO:     172.18.0.1:46762 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:19:38.242 | 10:19:38 [INFO] Executing SQL: SELECT dt.topic_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id = d.date_id W...
+2025-09-24 17:19:38.254 | 10:19:38 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:19:38.254 | INFO:     172.18.0.1:54380 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:20:15.915 | 10:20:15 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:20:15.915 | ```json
+2025-09-24 17:20:15.915 | {
+2025-09-24 17:20:15.915 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:20:15.915 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:20:15.915 |   "metric": "avg",
+2025-09-24 17:20:15.915 |   "metric_hint": "Trung bình số lượng bài viết mỗi ngày trong tháng 1 năm 2021",
+2025-09-24 17:20:15.915 |   "dimensions": ["dd.day"],
+2025-09-24 17:20:15.915 |   "filters": [{"column": "dd.month", "operator": "=", "value": 1}, {"column": "dd.year", "operator": "=", "value": 2021}],
+2025-09-24 17:20:15.915 |   "order_by": {},
+2025-09-24 17:20:15.915 |   "limit": null
+2025-09-24 17:20:15.915 | }
+2025-09-24 17:20:15.915 | ```
+2025-09-24 17:20:15.916 | 10:20:15 [INFO] Executing SQL: SELECT dd.day
+2025-09-24 17:20:15.916 | FROM dw.fact_articles fa
+2025-09-24 17:20:15.916 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:20:15.916 | WHERE dd.month = 1 AND dd.year = 2021
+2025-09-24 17:20:15.916 | GROUP BY dd.day;
+2025-09-24 17:20:15.926 | 10:20:15 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:20:15.926 | INFO:     172.18.0.1:54384 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:20:15.931 | 10:20:15 [INFO] Executing SQL: SELECT AVG(cnt) FROM (SELECT d.full_date, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 AND d.month ...
+2025-09-24 17:20:15.941 | 10:20:15 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:20:15.941 | INFO:     172.18.0.1:58482 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:20:44.343 | 10:20:44 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:20:44.343 | ```json
+2025-09-24 17:20:44.343 | {
+2025-09-24 17:20:44.343 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:20:44.343 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:20:44.343 |   "metric": "count",
+2025-09-24 17:20:44.343 |   "metric_hint": "Số bài viết theo năm",
+2025-09-24 17:20:44.343 |   "dimensions": [],
+2025-09-24 17:20:44.343 |   "filters": [{"column": "dd.year", "operator": "IN", "value": [2019, 2020]}],
+2025-09-24 17:20:44.343 |   "order_by": {},
+2025-09-24 17:20:44.343 |   "limit": null
+2025-09-24 17:20:44.343 | }
+2025-09-24 17:20:44.343 | ```
+2025-09-24 17:20:44.344 | 10:20:44 [INFO] Executing SQL: SELECT COUNT(*) AS count_result
+2025-09-24 17:20:44.344 | FROM dw.fact_articles fa
+2025-09-24 17:20:44.344 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:20:44.344 | WHERE dd.year IN ('2019', '2020');
+2025-09-24 17:20:44.364 | 10:20:44 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:20:44.364 | INFO:     172.18.0.1:58498 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:20:44.370 | 10:20:44 [INFO] Executing SQL: SELECT d.year, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year IN (2019, 2020) GROUP BY d.year;
+2025-09-24 17:20:44.379 | 10:20:44 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:20:44.379 | INFO:     172.18.0.1:50700 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:21:25.605 | 10:21:25 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:21:25.605 | ```json
+2025-09-24 17:21:25.605 | {
+2025-09-24 17:21:25.605 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:21:25.605 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors", "da": "dw.dim_articles", "dd": "dw.dim_date"},
+2025-09-24 17:21:25.605 |   "metric": "count",
+2025-09-24 17:21:25.605 |   "metric_hint": "Số bài viết theo tác giả",
+2025-09-24 17:21:25.605 |   "dimensions": ["au.author_name"],
+2025-09-24 17:21:25.605 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}, {"column": "dd.month", "operator": "=", "value": 12}],
+2025-09-24 17:21:25.605 |   "order_by": {"column": "COUNT(fa.article_id)", "direction": "DESC"},
+2025-09-24 17:21:25.605 |   "limit": 3
+2025-09-24 17:21:25.605 | }
+2025-09-24 17:21:25.606 | 10:21:25 [INFO] Executing SQL: SELECT au.author_name, COUNT(*) AS count_result
+2025-09-24 17:21:25.606 | FROM dw.fact_articles fa
+2025-09-24 17:21:25.606 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:21:25.606 | INNER JOIN dw.dim_author...
+2025-09-24 17:21:25.617 | 10:21:25 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:21:25.618 | INFO:     172.18.0.1:50704 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:21:25.623 | 10:21:25 [INFO] Executing SQL: SELECT da.author_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id JOIN dw.dim_date d ON fa.date_id = d.date_...
+2025-09-24 17:21:25.632 | 10:21:25 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:21:25.633 | INFO:     172.18.0.1:43820 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:21:53.001 | 10:21:53 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:21:53.001 | ```json
+2025-09-24 17:21:53.001 | {
+2025-09-24 17:21:53.001 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:21:53.001 |   "aliases": {"fa": "dw.fact_articles"},
+2025-09-24 17:21:53.001 |   "metric": "count",
+2025-09-24 17:21:53.001 |   "metric_hint": "Số bài viết có số từ lớn hơn 2000",
+2025-09-24 17:21:53.001 |   "dimensions": [],
+2025-09-24 17:21:53.001 |   "filters": [{"column": "fa.word_count", "operator": ">", "value": 2000}],
+2025-09-24 17:21:53.001 |   "order_by": {},
+2025-09-24 17:21:53.001 |   "limit": null
+2025-09-24 17:21:53.001 | }
+2025-09-24 17:21:53.001 | ```
+2025-09-24 17:21:53.002 | 10:21:53 [INFO] Executing SQL: SELECT COUNT(*) AS count_result
+2025-09-24 17:21:53.002 | FROM dw.fact_articles fa
+2025-09-24 17:21:53.002 | WHERE fa.word_count > 2000;
+2025-09-24 17:21:53.011 | 10:21:53 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:21:53.012 | INFO:     172.18.0.1:43828 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:21:53.017 | 10:21:53 [INFO] Executing SQL: SELECT COUNT(*) FROM dw.fact_articles WHERE word_count > 2000;
+2025-09-24 17:21:53.025 | 10:21:53 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:21:53.025 | INFO:     172.18.0.1:59690 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:22:32.105 | 10:22:32 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:22:32.105 | ```json
+2025-09-24 17:22:32.105 | {
+2025-09-24 17:22:32.105 |   "from_tables": ["dw.fact_articles", "dw.dim_articles"],
+2025-09-24 17:22:32.105 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:22:32.105 |   "metric": "count(DISTINCT fa.article_id)",
+2025-09-24 17:22:32.105 |   "metric_hint": "Số bài viết nhất trong một nguồn trong năm 2021",
+2025-09-24 17:22:32.105 |   "dimensions": ["da.source_name"],
+2025-09-24 17:22:32.105 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2021}],
+2025-09-24 17:22:32.105 |   "order_by": {"column": "count(DISTINCT fa.article_id)", "direction": "DESC"},
+2025-09-24 17:22:32.105 |   "limit": 1
+2025-09-24 17:22:32.105 | }
+2025-09-24 17:22:32.105 | ```
+2025-09-24 17:22:32.106 | INFO:     172.18.0.1:59694 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:23:08.255 | 10:23:08 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:23:08.255 | ```json
+2025-09-24 17:23:08.255 | {
+2025-09-24 17:23:08.255 |   "from_tables": ["dw.fact_articles", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:23:08.255 |   "aliases": {"fa": "dw.fact_articles", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:23:08.255 |   "metric": "count",
+2025-09-24 17:23:08.255 |   "metric_hint": "Số bài viết theo chủ đề và năm",
+2025-09-24 17:23:08.255 |   "dimensions": ["dt.topic_name", "dd.year"],
+2025-09-24 17:23:08.255 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2020}],
+2025-09-24 17:23:08.255 |   "order_by": {},
+2025-09-24 17:23:08.255 |   "limit": null
+2025-09-24 17:23:08.255 | }
+2025-09-24 17:23:08.255 | ```
+2025-09-24 17:23:08.256 | 10:23:08 [INFO] Executing SQL: SELECT dt.topic_name, dd.year, COUNT(*) AS count_result
+2025-09-24 17:23:08.256 | FROM dw.fact_articles fa
+2025-09-24 17:23:08.256 | INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+2025-09-24 17:23:08.256 | INNER JOIN dw.dim_date...
+2025-09-24 17:23:08.266 | 10:23:08 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:23:08.266 | INFO:     172.18.0.1:45814 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:23:08.271 | 10:23:08 [INFO] Executing SQL: SELECT dt.topic_name, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d....
+2025-09-24 17:23:08.281 | 10:23:08 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:23:08.281 | INFO:     172.18.0.1:52876 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:23:43.299 | 10:23:43 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:23:43.299 | ```json
+2025-09-24 17:23:43.299 | {
+2025-09-24 17:23:43.299 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:23:43.299 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:23:43.299 |   "metric": "count",
+2025-09-24 17:23:43.299 |   "metric_hint": "Số bài viết theo ngày trong năm 2022",
+2025-09-24 17:23:43.299 |   "dimensions": ["dd.day", "dd.month"],
+2025-09-24 17:23:43.299 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:23:43.299 |   "order_by": {"column": "COUNT(fa.article_id)", "direction": "ASC"},
+2025-09-24 17:23:43.299 |   "limit": 1
+2025-09-24 17:23:43.299 | }
+2025-09-24 17:23:43.299 | ```
+2025-09-24 17:23:43.300 | 10:23:43 [INFO] Executing SQL: SELECT dd.day, dd.month, COUNT(*) AS count_result
+2025-09-24 17:23:43.300 | FROM dw.fact_articles fa
+2025-09-24 17:23:43.300 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:23:43.300 | WHERE dd.year = 2022
+2025-09-24 17:23:43.300 | GROUP BY dd...
+2025-09-24 17:23:43.310 | 10:23:43 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:23:43.310 | INFO:     172.18.0.1:52882 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:23:43.315 | 10:23:43 [INFO] Executing SQL: SELECT d.full_date, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 GROUP BY d.full_date ORDER BY cnt ...
+2025-09-24 17:23:43.326 | 10:23:43 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:23:43.326 | INFO:     172.18.0.1:51944 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:24:22.947 | 10:24:22 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:24:22.947 | ```json
+2025-09-24 17:24:22.947 | {
+2025-09-24 17:24:22.947 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:24:22.947 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors"},
+2025-09-24 17:24:22.947 |   "metric": "count",
+2025-09-24 17:24:22.947 |   "metric_hint": "Số tác giả viết ít nhất 10 bài",
+2025-09-24 17:24:22.947 |   "dimensions": ["au.author_name"],
+2025-09-24 17:24:22.947 |   "filters": [{"column": "fa.article_id", "operator": "=", "value": null}],
+2025-09-24 17:24:22.947 |   "having": [{"column": "COUNT(fa.article_id)", "operator": ">=", "value": 10}],
+2025-09-24 17:24:22.947 |   "order_by": {},
+2025-09-24 17:24:22.947 |   "limit": null
+2025-09-24 17:24:22.947 | }
+2025-09-24 17:24:22.947 | ```
+2025-09-24 17:24:22.948 | 10:24:22 [INFO] Executing SQL: SELECT au.author_name, COUNT(*) AS count_result
+2025-09-24 17:24:22.948 | FROM dw.fact_articles fa
+2025-09-24 17:24:22.948 | INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+2025-09-24 17:24:22.948 | GROUP BY au.author_name
+2025-09-24 17:24:22.948 | HAV...
+2025-09-24 17:24:22.959 | 10:24:22 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:24:22.960 | INFO:     172.18.0.1:51954 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:24:22.965 | 10:24:22 [INFO] Executing SQL: SELECT COUNT(*) FROM (SELECT author_id, COUNT(*) AS cnt FROM dw.fact_articles GROUP BY author_id HAVING COUNT(*) >= 10) t;
+2025-09-24 17:24:22.975 | 10:24:22 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:24:22.976 | INFO:     172.18.0.1:43558 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:24:55.617 | 10:24:55 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:24:55.617 | ```json
+2025-09-24 17:24:55.617 | {
+2025-09-24 17:24:55.617 |   "from_tables": ["dw.fact_articles", "dw.dim_articles"],
+2025-09-24 17:24:55.617 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:24:55.617 |   "metric": null,
+2025-09-24 17:24:55.617 |   "metric_hint": "Không có phép tính đo lường",
+2025-09-24 17:24:55.617 |   "dimensions": ["da.title"],
+2025-09-24 17:24:55.617 |   "filters": [{"column": "da.title", "operator": "LIKE", "value": "%COVID%"}],
+2025-09-24 17:24:55.617 |   "order_by": {},
+2025-09-24 17:24:55.617 |   "limit": null
+2025-09-24 17:24:55.617 | }
+2025-09-24 17:24:55.617 | ```
+2025-09-24 17:24:55.618 | 10:24:55 [INFO] Executing SQL: SELECT da.title
+2025-09-24 17:24:55.618 | FROM dw.fact_articles fa
+2025-09-24 17:24:55.618 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:24:55.618 | WHERE da.title LIKE '%COVID%'
+2025-09-24 17:24:55.618 | GROUP BY da.title;
+2025-09-24 17:24:55.629 | 10:24:55 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:24:55.629 | INFO:     172.18.0.1:43562 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:24:55.634 | 10:24:55 [INFO] Executing SQL: SELECT title FROM dw.dim_articles WHERE title ILIKE '%COVID%';
+2025-09-24 17:24:55.657 | 10:24:55 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:24:55.657 | INFO:     172.18.0.1:41220 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:25:30.447 | 10:25:30 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:25:30.447 | ```json
+2025-09-24 17:25:30.447 | {
+2025-09-24 17:25:30.447 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:25:30.447 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:25:30.447 |   "metric": "count",
+2025-09-24 17:25:30.447 |   "metric_hint": "Số bài viết theo tháng và năm",
+2025-09-24 17:25:30.447 |   "dimensions": ["dd.month", "dd.year"],
+2025-09-24 17:25:30.447 |   "filters": [{"column": "dd.month", "operator": "=", "value": 7}, {"column": "dd.year", "operator": "=", "value": 2023}],
+2025-09-24 17:25:30.447 |   "order_by": {},
+2025-09-24 17:25:30.447 |   "limit": null
+2025-09-24 17:25:30.447 | }
+2025-09-24 17:25:30.447 | ```
+2025-09-24 17:25:30.448 | 10:25:30 [INFO] Executing SQL: SELECT dd.month, dd.year, COUNT(*) AS count_result
+2025-09-24 17:25:30.448 | FROM dw.fact_articles fa
+2025-09-24 17:25:30.448 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:25:30.448 | WHERE dd.month = 7 AND dd.year ...
+2025-09-24 17:25:30.458 | 10:25:30 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:25:30.459 | INFO:     172.18.0.1:41224 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:25:30.464 | 10:25:30 [INFO] Executing SQL: SELECT COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2023 AND d.month = 7;
+2025-09-24 17:25:30.473 | 10:25:30 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:25:30.474 | INFO:     172.18.0.1:44730 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:26:04.098 | 10:26:04 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:26:04.098 | ```
+2025-09-24 17:26:04.098 | {
+2025-09-24 17:26:04.098 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:26:04.098 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors", "da": "dw.dim_date"},
+2025-09-24 17:26:04.098 |   "metric": "count",
+2025-09-24 17:26:04.098 |   "metric_hint": "Số bài viết theo tác giả trong năm 2022",
+2025-09-24 17:26:04.098 |   "dimensions": ["au.author_name"],
+2025-09-24 17:26:04.098 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:26:04.098 |   "order_by": {},
+2025-09-24 17:26:04.098 |   "limit": null
+2025-09-24 17:26:04.098 | }
+2025-09-24 17:26:04.098 | ```
+2025-09-24 17:26:04.099 | INFO:     172.18.0.1:44734 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:26:32.720 | 10:26:32 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:26:32.720 | ```json
+2025-09-24 17:26:32.720 | {
+2025-09-24 17:26:32.720 |   "from_tables": ["dw.fact_articles"],
+2025-09-24 17:26:32.720 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles"},
+2025-09-24 17:26:32.720 |   "metric": "max",
+2025-09-24 17:26:32.720 |   "metric_hint": "Độ dài lớn nhất của bài viết",
+2025-09-24 17:26:32.720 |   "dimensions": [],
+2025-09-24 17:26:32.720 |   "filters": [],
+2025-09-24 17:26:32.720 |   "order_by": {
+2025-09-24 17:26:32.720 |     "column": "fa.word_count",
+2025-09-24 17:26:32.720 |     "direction": "DESC"
+2025-09-24 17:26:32.720 |   },
+2025-09-24 17:26:32.720 |   "limit": 5
+2025-09-24 17:26:32.720 | }
+2025-09-24 17:26:32.720 | ```
+2025-09-24 17:26:32.721 | 10:26:32 [INFO] Executing SQL: SELECT COUNT(*) AS count_result
+2025-09-24 17:26:32.721 | FROM dw.fact_articles fa
+2025-09-24 17:26:32.721 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:26:32.721 | ORDER BY fa.word_count DESC
+2025-09-24 17:26:32.721 | LIMIT 5;
+2025-09-24 17:26:32.731 | INFO:     172.18.0.1:46332 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:27:13.141 | 10:27:13 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:27:13.141 | ```json
+2025-09-24 17:27:13.141 | {
+2025-09-24 17:27:13.141 |   "from_tables": ["dw.fact_articles", "dw.dim_authors", "dw.dim_date"],
+2025-09-24 17:27:13.141 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors", "dd": "dw.dim_date"},
+2025-09-24 17:27:13.141 |   "metric": "count",
+2025-09-24 17:27:13.141 |   "metric_hint": "Số tác giả viết trong tháng 3 năm 2021",
+2025-09-24 17:27:13.141 |   "dimensions": ["au.author_name"],
+2025-09-24 17:27:13.141 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2021}, {"column": "dd.month", "operator": "=", "value": 3}],
+2025-09-24 17:27:13.141 |   "order_by": {},
+2025-09-24 17:27:13.141 |   "limit": null
+2025-09-24 17:27:13.141 | }
+2025-09-24 17:27:13.141 | ```
+2025-09-24 17:27:13.142 | 10:27:13 [INFO] Executing SQL: SELECT au.author_name, COUNT(*) AS count_result
+2025-09-24 17:27:13.142 | FROM dw.fact_articles fa
+2025-09-24 17:27:13.142 | INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id
+2025-09-24 17:27:13.142 | INNER JOIN dw.dim_date dd O...
+2025-09-24 17:27:13.155 | 10:27:13 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:27:13.155 | INFO:     172.18.0.1:57886 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:27:13.161 | 10:27:13 [INFO] Executing SQL: SELECT COUNT(DISTINCT fa.author_id) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 AND d.month = 3;
+2025-09-24 17:27:13.171 | 10:27:13 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:27:13.171 | INFO:     172.18.0.1:38006 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:27:50.768 | 10:27:50 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:27:50.768 | ```json
+2025-09-24 17:27:50.768 | {
+2025-09-24 17:27:50.768 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:27:50.768 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:27:50.768 |   "metric": "count",
+2025-09-24 17:27:50.768 |   "metric_hint": "Số bài viết mỗi ngày trong tháng 6 năm 2022",
+2025-09-24 17:27:50.768 |   "dimensions": ["dd.day"],
+2025-09-24 17:27:50.768 |   "filters": [{"column": "dd.month", "operator": "=", "value": 6}, {"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:27:50.768 |   "order_by": {},
+2025-09-24 17:27:50.768 |   "limit": null
+2025-09-24 17:27:50.768 | }
+2025-09-24 17:27:50.768 | ```
+2025-09-24 17:27:50.769 | 10:27:50 [INFO] Executing SQL: SELECT dd.day, COUNT(*) AS count_result
+2025-09-24 17:27:50.769 | FROM dw.fact_articles fa
+2025-09-24 17:27:50.769 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:27:50.769 | WHERE dd.month = 6 AND dd.year = 2022
+2025-09-24 17:27:50.769 | GROU...
+2025-09-24 17:27:50.779 | 10:27:50 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:27:50.779 | INFO:     172.18.0.1:38008 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:27:50.785 | 10:27:50 [INFO] Executing SQL: SELECT d.full_date, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 AND d.month = 6 GROUP BY d.full_date ORDE...
+2025-09-24 17:27:50.794 | 10:27:50 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:27:50.794 | INFO:     172.18.0.1:41112 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:28:30.049 | 10:28:30 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:28:30.049 | ```json
+2025-09-24 17:28:30.049 | {
+2025-09-24 17:28:30.049 |   "from_tables": ["dw.fact_articles", "dw.dim_topics"],
+2025-09-24 17:28:30.049 |   "aliases": {"fa": "dw.fact_articles", "dt": "dw.dim_topics"},
+2025-09-24 17:28:30.049 |   "metric": "count",
+2025-09-24 17:28:30.049 |   "metric_hint": "Số lượng chủ đề phổ biến nhất trong năm 2023",
+2025-09-24 17:28:30.049 |   "dimensions": ["dt.topic_name"],
+2025-09-24 17:28:30.049 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2023}],
+2025-09-24 17:28:30.049 |   "order_by": {"column": "COUNT(fa.article_id)", "direction": "DESC"},
+2025-09-24 17:28:30.049 |   "limit": 1
+2025-09-24 17:28:30.049 | }
+2025-09-24 17:28:30.049 | ```
+2025-09-24 17:28:30.049 | INFO:     172.18.0.1:41122 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:29:21.265 | 10:29:21 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:29:21.265 | ```json
+2025-09-24 17:29:21.265 | {
+2025-09-24 17:29:21.265 |   "from_tables": ["dw.fact_articles", "dw.dim_articles", "dw.dim_date"],
+2025-09-24 17:29:21.265 |   "aliases": {"fa": "dw.fact_articles", "da": "dw.dim_articles", "dd": "dw.dim_date"},
+2025-09-24 17:29:21.265 |   "metric": "avg",
+2025-09-24 17:29:21.265 |   "metric_hint": "Trung bình số bài viết theo nguồn mỗi tháng trong năm 2022",
+2025-09-24 17:29:21.265 |   "dimensions": ["dd.year", "dd.month", "da.source_name"],
+2025-09-24 17:29:21.265 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:29:21.265 |   "order_by": {"column": "avg(fa.word_count)", "direction": "DESC"},
+2025-09-24 17:29:21.265 |   "limit": null
+2025-09-24 17:29:21.265 | }
+2025-09-24 17:29:21.265 | ```
+2025-09-24 17:29:21.267 | 10:29:21 [INFO] Executing SQL: SELECT dd.year, dd.month, da.source_name
+2025-09-24 17:29:21.267 | FROM dw.fact_articles fa
+2025-09-24 17:29:21.267 | INNER JOIN dw.dim_articles da ON fa.article_id = da.article_id
+2025-09-24 17:29:21.267 | INNER JOIN dw.dim_date dd ON fa...
+2025-09-24 17:29:21.278 | 10:29:21 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:29:21.279 | INFO:     172.18.0.1:38696 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:29:21.285 | 10:29:21 [INFO] Executing SQL: SELECT da.source_name, AVG(cnt) FROM (SELECT da.source_name, d.month, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.art...
+2025-09-24 17:29:21.305 | 10:29:21 [ERROR] Direct SQL execution failed
+2025-09-24 17:29:21.305 | Traceback (most recent call last):
+2025-09-24 17:29:21.305 |   File "/app/analytics/analytics_api.py", line 214, in ask
+2025-09-24 17:29:21.305 |     result = run_sql(sql)
+2025-09-24 17:29:21.305 |              ^^^^^^^^^^^^
+2025-09-24 17:29:21.305 |   File "/app/analytics/analytics_api.py", line 53, in run_sql
+2025-09-24 17:29:21.305 |     cur.execute(sql)
+2025-09-24 17:29:21.305 | psycopg2.errors.UndefinedTable: missing FROM-clause entry for table "da"
+2025-09-24 17:29:21.305 | LINE 1: SELECT da.source_name, AVG(cnt) FROM (SELECT da.source_name,...
+2025-09-24 17:29:21.305 |                ^
+2025-09-24 17:29:21.305 | 
+2025-09-24 17:29:21.305 | INFO:     172.18.0.1:44322 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:30:03.933 | 10:30:03 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:30:03.933 | ```json
+2025-09-24 17:30:03.933 | {
+2025-09-24 17:30:03.933 |   "from_tables": ["dw.fact_articles", "dw.dim_topics", "dw.dim_date"],
+2025-09-24 17:30:03.933 |   "aliases": {"fa": "dw.fact_articles", "dt": "dw.dim_topics", "dd": "dw.dim_date"},
+2025-09-24 17:30:03.933 |   "metric": "count",
+2025-09-24 17:30:03.934 |   "metric_hint": "Số bài viết theo chủ đề trong năm 2021",
+2025-09-24 17:30:03.934 |   "dimensions": ["dt.topic_name"],
+2025-09-24 17:30:03.934 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2021}],
+2025-09-24 17:30:03.934 |   "order_by": {},
+2025-09-24 17:30:03.934 |   "limit": null
+2025-09-24 17:30:03.934 | }
+2025-09-24 17:30:03.934 | ```
+2025-09-24 17:30:03.935 | 10:30:03 [INFO] Executing SQL: SELECT dt.topic_name, COUNT(*) AS count_result
+2025-09-24 17:30:03.936 | FROM dw.fact_articles fa
+2025-09-24 17:30:03.936 | INNER JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id
+2025-09-24 17:30:03.936 | INNER JOIN dw.dim_date dd ON fa...
+2025-09-24 17:30:03.947 | 10:30:03 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:30:03.947 | INFO:     172.18.0.1:44336 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:30:03.954 | 10:30:03 [INFO] Executing SQL: SELECT dt.topic_name, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d....
+2025-09-24 17:30:03.968 | 10:30:03 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:30:03.969 | INFO:     172.18.0.1:37012 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:30:53.237 | 10:30:53 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:30:53.237 | ```json
+2025-09-24 17:30:53.237 | {
+2025-09-24 17:30:53.237 |   "from_tables": ["dw.fact_articles", "dw.dim_date"],
+2025-09-24 17:30:53.237 |   "aliases": {"fa": "dw.fact_articles", "dd": "dw.dim_date"},
+2025-09-24 17:30:53.237 |   "metric": "max",
+2025-09-24 17:30:53.237 |   "metric_hint": "Độ dài bài viết lớn nhất trong một ngày",
+2025-09-24 17:30:53.237 |   "dimensions": ["dd.day", "dd.month", "dd.year"],
+2025-09-24 17:30:53.237 |   "filters": [{"column": "dd.year", "operator": "=", "value": 2022}],
+2025-09-24 17:30:53.237 |   "order_by": {"column": "max(fa.word_count)", "direction": "DESC"},
+2025-09-24 17:30:53.237 |   "limit": 1
+2025-09-24 17:30:53.237 | }
+2025-09-24 17:30:53.237 | ```
+2025-09-24 17:30:53.239 | 10:30:53 [INFO] Executing SQL: SELECT dd.day, dd.month, dd.year
+2025-09-24 17:30:53.239 | FROM dw.fact_articles fa
+2025-09-24 17:30:53.239 | INNER JOIN dw.dim_date dd ON fa.date_id = dd.date_id
+2025-09-24 17:30:53.239 | WHERE dd.year = 2022
+2025-09-24 17:30:53.239 | GROUP BY dd.day, dd.month, d...
+2025-09-24 17:30:53.249 | 10:30:53 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:30:53.249 | INFO:     172.18.0.1:37028 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:30:53.268 | 10:30:53 [INFO] Executing SQL: SELECT d.full_date, MAX(fa.word_count) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 GROUP BY d.full_date ORDER BY M...
+2025-09-24 17:30:53.277 | 10:30:53 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:30:53.278 | INFO:     172.18.0.1:58740 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:31:28.559 | 10:31:28 [INFO] Raw Ollama response (deconstructor, attempt 1): Plan JSON:
+2025-09-24 17:31:28.559 | ```json
+2025-09-24 17:31:28.560 | {
+2025-09-24 17:31:28.560 |   "from_tables": ["dw.fact_articles", "dw.dim_authors"],
+2025-09-24 17:31:28.560 |   "aliases": {"fa": "dw.fact_articles", "au": "dw.dim_authors"},
+2025-09-24 17:31:28.560 |   "metric": "count",
+2025-09-24 17:31:28.560 |   "metric_hint": "Số tác giả không có bài viết nào",
+2025-09-24 17:31:28.560 |   "dimensions": [],
+2025-09-24 17:31:28.560 |   "filters": [{"column": "fa.article_id", "operator": "IS NULL"}],
+2025-09-24 17:31:28.560 |   "order_by": {},
+2025-09-24 17:31:28.560 |   "limit": null
+2025-09-24 17:31:28.560 | }
+2025-09-24 17:31:28.560 | ```
+2025-09-24 17:31:28.560 | 10:31:28 [INFO] Executing SQL: SELECT COUNT(*) AS count_result
+2025-09-24 17:31:28.560 | FROM dw.fact_articles fa
+2025-09-24 17:31:28.560 | INNER JOIN dw.dim_authors au ON fa.author_id = au.author_id;
+2025-09-24 17:31:28.572 | 10:31:28 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:31:28.572 | INFO:     172.18.0.1:58742 - "POST /ask HTTP/1.1" 200 OK
+2025-09-24 17:31:28.578 | 10:31:28 [INFO] Executing SQL: SELECT COUNT(*) FROM dw.dim_authors da WHERE da.author_id NOT IN (SELECT DISTINCT author_id FROM dw.fact_articles);
+2025-09-24 17:31:28.588 | 10:31:28 [ERROR] LLM error in summarizer: Unknown role summarizer
+2025-09-24 17:31:28.588 | INFO:     172.18.0.1:46492 - "POST /ask HTTP/1.1" 200 OK

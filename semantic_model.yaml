@@ -1,39 +1,87 @@
 tables:
   - name: dw.dim_articles
     columns:
-      - article_id: ID duy nhất của bài viết (primary key)
-      - title: Tiêu đề của bài viết
-      - source_name: Nguồn đăng bài viết 
-      - source_url: Đường dẫn tới bài viết gốc
-      - content: Toàn bộ nội dung bài viết
-      - embedding: Vector embedding nội dung (nếu đã tạo)
+      - name: article_id
+        type: integer
+        description: ID duy nhất của bài viết (primary key)
+      - name: title
+        type: varchar
+        description: Tiêu đề của bài viết, dùng cho tìm kiếm từ khóa với LIKE
+      - name: source_name
+        type: varchar
+        description: Tên nguồn đăng bài viết, dùng cho group by hoặc lọc
+      - name: source_url
+        type: varchar
+        description: Đường dẫn tới bài viết gốc
+      - name: content
+        type: text
+        description: Toàn bộ nội dung bài viết, dùng cho tìm kiếm từ khóa với LIKE
+      - name: embedding
+        type: vector
+        description: Vector embedding nội dung (nếu đã tạo), không dùng trong SQL thông thường
 
   - name: dw.dim_authors
     columns:
-      - author_id: ID duy nhất của tác giả (primary key)
-      - author_name: Tên tác giả
+      - name: author_id
+        type: integer
+        description: ID duy nhất của tác giả (primary key)
+      - name: author_name
+        type: varchar
+        description: Tên tác giả, dùng cho group by hoặc lọc
 
   - name: dw.dim_topics
     columns:
-      - topic_id: ID duy nhất của chủ đề (primary key)
-      - topic_name: Tên chủ đề đã chuẩn hóa dạng slug 
+      - name: topic_id
+        type: integer
+        description: ID duy nhất của chủ đề (primary key)
+      - name: topic_name
+        type: varchar
+        description: Tên chủ đề dạng slug, dùng cho group by hoặc lọc, không dùng topic_id
 
   - name: dw.dim_date
     columns:
-      - date_id: ID duy nhất của ngày (primary key)
-      - full_date: Ngày đầy đủ (YYYY-MM-DD)
-      - year: Năm
-      - month: Tháng (số 1–12)
-      - day: Ngày trong tháng (1–31)
+      - name: date_id
+        type: integer
+        description: ID duy nhất của ngày (primary key)
+      - name: full_date
+        type: date
+        description: Ngày đầy đủ (YYYY-MM-DD)
+      - name: year
+        type: integer
+        description: Năm (YYYY)
+      - name: month
+        type: integer
+        description: Tháng (1–12)
+      - name: day
+        type: integer
+        description: Ngày trong tháng (1–31)
 
   - name: dw.fact_articles
     columns:
-      - fact_id: ID fact (primary key)
-      - article_id: Khóa ngoại tới bài viết dw.dim_articles.article_id
-      - author_id: Khóa ngoại tới tác giả dw.dim_authors.author_id
-      - topic_id: Khóa ngoại tới chủ đề dw.dim_topics.topic_id
-      - date_id: Khóa ngoại tới ngày dw.dim_date.date_id
-      - word_count: Số từ trong bài viết (dùng để tìm bài viết dài/ngắn theo số từ)
-      - sentiment: Kết quả phân tích cảm xúc (pos = tích cực, neu = trung lập, neg = tiêu cực)
-      - keywords: Danh sách từ khóa chính (chuỗi văn bản)
-      - read_time: Thời gian đọc ước tính (phút, dùng để tìm bài viết dài nhất/ngắn nhất)
+      - name: fact_id
+        type: integer
+        description: ID duy nhất của fact (primary key)
+      - name: article_id
+        type: integer
+        description: Khóa ngoại tới dw.dim_articles.article_id
+      - name: author_id
+        type: integer
+        description: Khóa ngoại tới dw.dim_authors.author_id
+      - name: topic_id
+        type: integer
+        description: Khóa ngoại tới dw.dim_topics.topic_id
+      - name: date_id
+        type: integer
+        description: Khóa ngoại tới dw.dim_date.date_id
+      - name: word_count
+        type: integer
+        description: Số từ trong bài viết, dùng cho tính toán sum, avg, min, max
+      - name: sentiment
+        type: varchar
+        description: Kết quả phân tích cảm xúc (pos = tích cực, neu = trung lập, neg = tiêu cực), dùng cho lọc hoặc group by
+      - name: keywords
+        type: text
+        description: Danh sách từ khóa chính, dùng cho tìm kiếm từ khóa với LIKE
+      - name: read_time
+        type: integer
+        description: Thời gian đọc ước tính (phút), dùng cho tính toán sum, avg, min, max

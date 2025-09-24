@@ -1,0 +1,189 @@
+[
+  {
+    "question": "Có bao nhiêu bài viết trong toàn bộ kho dữ liệu?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM dw.fact_articles;"
+  },
+  {
+    "question": "Có bao nhiêu tác giả duy nhất đã đăng bài?",
+    "ground_truth_sql": "SELECT COUNT(DISTINCT author_id) FROM dw.fact_articles;"
+  },
+  {
+    "question": "Danh sách tất cả các chủ đề trong hệ thống?",
+    "ground_truth_sql": "SELECT topic_name FROM dw.dim_topics;"
+  },
+  {
+    "question": "Có bao nhiêu bài viết trong năm 2022?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022;"
+  },
+  {
+    "question": "Top 5 tác giả có nhiều bài viết nhất?",
+    "ground_truth_sql": "SELECT da.author_name, COUNT(*) AS article_count FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id GROUP BY da.author_name ORDER BY article_count DESC LIMIT 5;"
+  },
+  {
+    "question": "Tổng số từ trong tất cả các bài viết?",
+    "ground_truth_sql": "SELECT SUM(word_count) FROM dw.fact_articles;"
+  },
+  {
+    "question": "Số lượng bài viết trung bình mỗi tác giả?",
+    "ground_truth_sql": "SELECT AVG(article_count) FROM (SELECT author_id, COUNT(*) AS article_count FROM dw.fact_articles GROUP BY author_id) t;"
+  },
+  {
+    "question": "Có bao nhiêu bài viết liên quan đến chủ đề 'Kinh tế'?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id WHERE dt.topic_name = 'Kinh tế';"
+  },
+  {
+    "question": "Ngày có nhiều bài viết nhất trong năm 2023?",
+    "ground_truth_sql": "SELECT d.full_date, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2023 GROUP BY d.full_date ORDER BY cnt DESC LIMIT 1;"
+  },
+  {
+    "question": "Nguồn báo nào có nhiều bài viết nhất?",
+    "ground_truth_sql": "SELECT da.source_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id GROUP BY da.source_name ORDER BY cnt DESC LIMIT 1;"
+  },
+  
+  {
+    "question": "Có bao nhiêu bài viết trong tháng 9 năm 2022?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 AND d.month = 9;"
+  },
+  {
+    "question": "Tác giả nào có nhiều bài viết nhất trong năm 2021?",
+    "ground_truth_sql": "SELECT da.author_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 GROUP BY da.author_name ORDER BY cnt DESC LIMIT 1;"
+  },
+  {
+    "question": "Có bao nhiêu chủ đề duy nhất trong các bài viết năm 2020?",
+    "ground_truth_sql": "SELECT COUNT(DISTINCT fa.topic_id) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2020;"
+  },
+  {
+    "question": "Trung bình số từ của các bài viết trong năm 2022?",
+    "ground_truth_sql": "SELECT AVG(fa.word_count) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022;"
+  },
+  {
+    "question": "Tổng số bài viết theo từng năm?",
+    "ground_truth_sql": "SELECT d.year, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id GROUP BY d.year ORDER BY d.year;"
+  },
+  {
+    "question": "Top 3 chủ đề có nhiều bài viết nhất?",
+    "ground_truth_sql": "SELECT dt.topic_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id GROUP BY dt.topic_name ORDER BY cnt DESC LIMIT 3;"
+  },
+  {
+    "question": "Có bao nhiêu bài viết vào ngày 1/1/2022?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.full_date = '2022-01-01';"
+  },
+  {
+    "question": "Tác giả nào viết nhiều bài nhất về chủ đề 'Chính trị'?",
+    "ground_truth_sql": "SELECT da.author_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id WHERE dt.topic_name = 'Chính trị' GROUP BY da.author_name ORDER BY cnt DESC LIMIT 1;"
+  },
+  {
+    "question": "Nguồn nào có ít bài viết nhất?",
+    "ground_truth_sql": "SELECT da.source_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id GROUP BY da.source_name ORDER BY cnt ASC LIMIT 1;"
+  },
+  {
+    "question": "Có bao nhiêu ngày trong năm 2021 có bài viết?",
+    "ground_truth_sql": "SELECT COUNT(DISTINCT d.full_date) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021;"
+  },
+
+  {
+    "question": "Số bài viết mỗi tác giả trong năm 2020?",
+    "ground_truth_sql": "SELECT da.author_name, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2020 GROUP BY da.author_name;"
+  },
+  {
+    "question": "Top 10 ngày có nhiều bài viết nhất?",
+    "ground_truth_sql": "SELECT d.full_date, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id GROUP BY d.full_date ORDER BY cnt DESC LIMIT 10;"
+  },
+  {
+    "question": "Có bao nhiêu tác giả viết về chủ đề 'Giáo dục'?",
+    "ground_truth_sql": "SELECT COUNT(DISTINCT fa.author_id) FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id WHERE dt.topic_name = 'Giáo dục';"
+  },
+  {
+    "question": "Bài viết nào có số từ nhiều nhất?",
+    "ground_truth_sql": "SELECT da.title, fa.word_count FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id ORDER BY fa.word_count DESC LIMIT 1;"
+  },
+  {
+    "question": "Có bao nhiêu bài viết mỗi tháng trong năm 2022?",
+    "ground_truth_sql": "SELECT d.month, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 GROUP BY d.month ORDER BY d.month;"
+  },
+
+  {
+    "question": "Chủ đề nào ít bài viết nhất năm 2022?",
+    "ground_truth_sql": "SELECT dt.topic_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 GROUP BY dt.topic_name ORDER BY cnt ASC LIMIT 1;"
+  },
+  {
+    "question": "Số bài viết trung bình mỗi ngày trong tháng 1 năm 2021?",
+    "ground_truth_sql": "SELECT AVG(cnt) FROM (SELECT d.full_date, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 AND d.month = 1 GROUP BY d.full_date) t;"
+  },
+  {
+    "question": "Có bao nhiêu bài viết năm 2019 so với 2020?",
+    "ground_truth_sql": "SELECT d.year, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year IN (2019, 2020) GROUP BY d.year;"
+  },
+  {
+    "question": "Top 3 tác giả viết nhiều nhất trong tháng 12/2022?",
+    "ground_truth_sql": "SELECT da.author_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 AND d.month = 12 GROUP BY da.author_name ORDER BY cnt DESC LIMIT 3;"
+  },
+  {
+    "question": "Có bao nhiêu bài viết chứa trên 2000 từ?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM dw.fact_articles WHERE word_count > 2000;"
+  },
+
+  {
+    "question": "Nguồn nào có nhiều bài viết nhất trong năm 2021?",
+    "ground_truth_sql": "SELECT da.source_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 GROUP BY da.source_name ORDER BY cnt DESC LIMIT 1;"
+  },
+  {
+    "question": "Có bao nhiêu bài viết trong mỗi chủ đề năm 2020?",
+    "ground_truth_sql": "SELECT dt.topic_name, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2020 GROUP BY dt.topic_name;"
+  },
+  {
+    "question": "Ngày nào có ít bài viết nhất trong năm 2022?",
+    "ground_truth_sql": "SELECT d.full_date, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 GROUP BY d.full_date ORDER BY cnt ASC LIMIT 1;"
+  },
+  {
+    "question": "Có bao nhiêu tác giả viết ít nhất 10 bài?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM (SELECT author_id, COUNT(*) AS cnt FROM dw.fact_articles GROUP BY author_id HAVING COUNT(*) >= 10) t;"
+  },
+  {
+    "question": "Bài viết nào có tiêu đề chứa 'COVID'?",
+    "ground_truth_sql": "SELECT title FROM dw.dim_articles WHERE title ILIKE '%COVID%';"
+  },
+
+  {
+    "question": "Có bao nhiêu bài viết vào tháng 7 năm 2023?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2023 AND d.month = 7;"
+  },
+  {
+    "question": "Tổng số bài viết theo từng tác giả trong năm 2022?",
+    "ground_truth_sql": "SELECT da.author_name, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_authors da ON fa.author_id = da.author_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 GROUP BY da.author_name;"
+  },
+  {
+    "question": "Top 5 bài viết dài nhất?",
+    "ground_truth_sql": "SELECT da.title, fa.word_count FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id ORDER BY fa.word_count DESC LIMIT 5;"
+  },
+  {
+    "question": "Có bao nhiêu tác giả viết trong tháng 3 năm 2021?",
+    "ground_truth_sql": "SELECT COUNT(DISTINCT fa.author_id) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 AND d.month = 3;"
+  },
+  {
+    "question": "Có bao nhiêu bài viết mỗi ngày trong tháng 6 năm 2022?",
+    "ground_truth_sql": "SELECT d.full_date, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 AND d.month = 6 GROUP BY d.full_date ORDER BY d.full_date;"
+  },
+
+  {
+    "question": "Chủ đề phổ biến nhất trong năm 2023?",
+    "ground_truth_sql": "SELECT dt.topic_name, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2023 GROUP BY dt.topic_name ORDER BY cnt DESC LIMIT 1;"
+  },
+  {
+    "question": "Nguồn nào có số bài viết trung bình nhiều nhất mỗi tháng trong năm 2022?",
+    "ground_truth_sql": "SELECT da.source_name, AVG(cnt) FROM (SELECT da.source_name, d.month, COUNT(*) AS cnt FROM dw.fact_articles fa JOIN dw.dim_articles da ON fa.article_id = da.article_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 GROUP BY da.source_name, d.month) t GROUP BY da.source_name ORDER BY AVG(cnt) DESC LIMIT 1;"
+  },
+  {
+    "question": "Tổng số bài viết của từng chủ đề trong năm 2021?",
+    "ground_truth_sql": "SELECT dt.topic_name, COUNT(*) FROM dw.fact_articles fa JOIN dw.dim_topics dt ON fa.topic_id = dt.topic_id JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2021 GROUP BY dt.topic_name;"
+  },
+  {
+    "question": "Ngày nào có bài viết dài nhất trong năm 2022?",
+    "ground_truth_sql": "SELECT d.full_date, MAX(fa.word_count) FROM dw.fact_articles fa JOIN dw.dim_date d ON fa.date_id = d.date_id WHERE d.year = 2022 GROUP BY d.full_date ORDER BY MAX(fa.word_count) DESC LIMIT 1;"
+  },
+  {
+    "question": "Có bao nhiêu tác giả không có bài viết nào?",
+    "ground_truth_sql": "SELECT COUNT(*) FROM dw.dim_authors da WHERE da.author_id NOT IN (SELECT DISTINCT author_id FROM dw.fact_articles);"
+  }
+
+]
